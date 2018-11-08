@@ -15,13 +15,13 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        populateUI();
+        generateUI();
     }
 
     /**
      * Populates the UI with details of the selected movie
      */
-    private void populateUI() {
+    private void generateUI() {
         /* Get BaseContext and store it a Context variable */
         Context context = getBaseContext();
 
@@ -57,7 +57,7 @@ public class DetailActivity extends AppCompatActivity {
 
             /* Get the full poster path Uri of the current movie and using the Picasso library
               load it into the moviePosterImageView */
-            Uri fullPosterPathUri = MovieAdapter.formatPosterPath();
+            Uri fullPosterPathUri = MovieAdapter.formatPosterPath(currentMovie);
             com.squareup.picasso.Picasso
                     .with(context)
                     .load(fullPosterPathUri)

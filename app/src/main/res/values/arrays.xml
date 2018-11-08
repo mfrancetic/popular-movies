@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Array for sorting options (most popular and top rated) -->
 <resources>
     <string-array name="sort_by_array">
         <item>@string/settings_sort_by_most_popular_label</item>

@@ -29,11 +29,6 @@ class MovieAdapter extends ArrayAdapter<Movie> {
     private static final String posterSize = "w185";
 
     /**
-     * Current movie object
-     */
-    private static Movie currentMovie;
-
-    /**
      * Constructs a new MovieAdapter.
      *
      * @param context is the context of the app.
@@ -57,14 +52,15 @@ class MovieAdapter extends ArrayAdapter<Movie> {
         }
 
         /* Find the movie at the given position in the list of movies */
-        currentMovie = getItem(position);
+        Movie currentMovie = getItem(position);
 
         /* Get context and find the gridItemImageView */
         Context context = getContext();
         gridItemImageView = convertView.findViewById(R.id.movie_poster_image_view);
 
         /* Get the fullPosterPathUri from the formatPosterPath() method */
-        Uri fullPosterPathUri = formatPosterPath();
+        assert currentMovie != null;
+        Uri fullPosterPathUri = formatPosterPath(currentMovie);
 
         /* Get the width and height pixels and store them in integers width and height*/
         int width = context.getResources().getDisplayMetrics().widthPixels;
@@ -85,8 +81,8 @@ class MovieAdapter extends ArrayAdapter<Movie> {
     /**
      * Return the formatted poster path Uri
      */
-    static Uri formatPosterPath() {
-        String posterPath = currentMovie.getUrlPoster();
+    static Uri formatPosterPath(Movie selectedMovie) {
+        String posterPath = selectedMovie.getUrlPoster();
         String fullPosterPath = BASE_POSTER_URL + posterSize + posterPath;
         return Uri.parse(fullPosterPath);
     }

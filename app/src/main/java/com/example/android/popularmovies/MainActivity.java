@@ -4,17 +4,11 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.nfc.Tag;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -27,13 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<List<Movie>>
-
-
-//        AdapterView.OnItemSelectedListener
-//        SharedPreferences.OnSharedPreferenceChangeListener
-//
-{
+        implements LoaderManager.LoaderCallbacks<List<Movie>> {
 
     /**
      * URL for the movie data from The MovieDB database
@@ -65,14 +53,25 @@ public class MainActivity extends AppCompatActivity
      */
     private ProgressBar loadingIndicator;
 
-
-    String selectedOption;
+    /**
+     * Selected option String, between most popular and top rated
+     */
+    private String selectedOption;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        generateGridView();
+        initializeLoader();
+        generateSpinner();
+    }
+
+    /**
+     * Generate and populate the GridView
+     */
+    private void generateGridView() {
         /* Find a reference to the GridView in the layout, create a new adapter that takes
          * an empty list of movies an input and set the adapter on the GridView,
          * so the grid can be populated in the user interface. */
@@ -86,42 +85,7 @@ public class MainActivity extends AppCompatActivity
         movieAdapter = new MovieAdapter(this, new ArrayList<Movie>());
         movieGridView.setAdapter(movieAdapter);
 
-
-        Spinner spinner = findViewById(R.id.spinner);
-
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.sort_by_array, R.layout.support_simple_spinner_dropdown_item);
-
-        spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
-        spinner.setAdapter(spinnerAdapter);
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int selectedPosition = parent.getSelectedItemPosition();
-                if (selectedPosition == R.id.popular) {
-                    selectedOption = getString(R.string.settings_sort_by_most_popular_value);
-                } else {
-                    selectedOption = getString(R.string.settings_sort_by_top_rated_value);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-
-//        spinner.setOnItemClickListener();
-
-
-        /* Obtain a reference to the SharedPreferences file for this app
-         * and register OnSharedPreferenceChangeListener */
-//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-//        preferences.registerOnSharedPreferenceChangeListener(this);
-
-        /* Set an item click listener on the GridView, which sends an intent to the DetailActivity
+          /* Set an item click listener on the GridView, which sends an intent to the DetailActivity
          to open the details of the selected movie. */
         movieGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -136,7 +100,60 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+    }
 
+    /**
+     * Generate the Spinner, which enables sorting between most popular and top rated movies
+     */
+    private void generateSpinner() {
+        /* Get the value for the most popular movies and store them in the selectedOption variable */
+        selectedOption = getString(R.string.settings_sort_by_most_popular_value);
+
+        Spinner spinner = findViewById(R.id.spinner);
+
+        /* Create a new ArrayAdapter, set the DropDownViewResource and set the adapter to the spinner */
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.sort_by_array, R.layout.support_simple_spinner_dropdown_item);
+
+        spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+
+        /* Set the OnItemSelectedListener on the Spinner */
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                /* Depending on the selected item, update the selectedOption value with the value
+                 * of the popular or top_rated key*/
+                int selectedPosition = parent.getSelectedItemPosition();
+                if (selectedPosition == 0) {
+                    selectedOption = getString(R.string.settings_sort_by_most_popular_value);
+                } else {
+                    selectedOption = getString(R.string.settings_sort_by_top_rated_value);
+                }
+
+                /* Clear the GridView as a new query will be kicked off */
+                movieAdapter.clear();
+
+                /* Hide the empty state text view as the loading indicator will be displayed */
+                emptyTextView.setVisibility(View.GONE);
+
+                /* Show the loading indicator while new date is being fetched */
+                loadingIndicator.setVisibility(View.VISIBLE);
+
+                /* Restart the loader to query again The MovieDB as the query settings have been updated */
+                getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    /**
+     * Initialize the loader
+     */
+    private void initializeLoader() {
         /* Get a reference to the ConnectivityManager to check state of network connectivity
          * and get details on the currently active default data network*/
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService
@@ -163,23 +180,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-//    @Override
-//    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-//        if (key.equals(getString(R.string.settings_sort_by_key))) {
-//            /* Clear the GridView as a new query will be kicked off */
-//            movieAdapter.clear();
-//
-//            /* Hide the empty state text view as the loading indicator will be displayed */
-//            emptyTextView.setVisibility(View.GONE);
-//
-//            /* Show the loading indicator while new date is being fetched */
-//            loadingIndicator.setVisibility(View.VISIBLE);
-//
-//            /* Restart the loader to query again The MovieDB as the query settings have been updated */
-//            getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
-//        }
-//    }
-
     /**
      * Create a new loader for the given URL
      */
@@ -189,25 +189,15 @@ public class MainActivity extends AppCompatActivity
         /* API key parameter that will be appended to the URL */
         String API_PARAM = "api_key";
 
-//        SharedPreferences sharedPreferences = PreferenceManager
-//                .getDefaultSharedPreferences(this);
-//
-//        /* GetString retrieves a String value from the sort-by preferences. The second parameter is
-//        the default value for the preference. */
-//        String sortBy = sharedPreferences.getString(getString(R.string.settings_sort_by_key),
-//                getString(R.string.settings_sort_by_default));
-
         /* Uri.parse breaks apart the URI string that's passed into its parameter */
         Uri baseUri = Uri.parse(MOVIES_BASE_URL);
 
         /* buildUpon prepares the baseUri that we just parsed so we can add query parameters to it */
         Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        /* Append query parameter and its value. */
-//        uriBuilder.appendQueryParameter(getString(R.string.settings_sort_by_key), sortBy);
-        String sortBy = "";
-
-        uriBuilder.appendEncodedPath(getString(R.string.settings_sort_by_most_popular_value));
+        /* Append the encoded path with the selected sorting option and the API key as a
+        query parameter */
+        uriBuilder.appendEncodedPath(selectedOption);
         uriBuilder.appendQueryParameter(API_PARAM, apiKey);
 
         /* Return the completed uri */
@@ -216,7 +206,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
-
         /* Hide loading indicator because the data has been loaded */
         View loadingIndicator = findViewById(R.id.loading_indicator);
         loadingIndicator.setVisibility(View.GONE);
@@ -241,29 +230,4 @@ public class MainActivity extends AppCompatActivity
     public void onLoaderReset(Loader<List<Movie>> loader) {
         movieAdapter.clear();
     }
-
-
-    //    /**
-//     * Initialize the contents of the Activity's options menu.
-//     */
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        /* Inflate the Options Menu as specified in the XML */
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-
-//    /**
-//     * Create a new intent to open the SettingsActivity
-//     */
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int itemId = item.getItemId();
-//        if (itemId == R.id.action_settings) {
-//            Intent settingsIntent = new Intent(this, SettingsActivity.class);
-//            startActivity(settingsIntent);
-//            return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 }

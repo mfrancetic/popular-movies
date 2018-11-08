@@ -5,9 +5,6 @@
     <!-- Title of the DetailActivity [CHAR LIMIT=30]-->
     <string name="detail_activity_name">Movie details</string>
 
-    <!-- Title of the SettingsActivity [CHAR LIMIT=30] -->
-    <string name="setting_title">Settings</string>
-
     <!-- Content description of the movie poster [CHAR LIMIT=30] -->
     <string name="movie_poster_image">Movie poster</string>
 
@@ -25,11 +22,6 @@
 
     <!-- Label for the user rating in the DetailActivity [CHAR LIMIT=30] -->
     <string name="user_rating_label">User rating:</string>
-
-    <!-- Strings for Sort-By Preference [CHAR LIMIT=30]-->
-    <string name="settings_sort_by_label">Sort By</string>
-    <string name="settings_sort_by_key" translatable="false">sort_by</string>
-    <string name="settings_sort_by_default" translatable="false">@string/settings_sort_by_most_popular_value</string>
 
     <!-- Label for sort-by most popular option [CHAR LIMIT=30]-->
     <string name="settings_sort_by_most_popular_label">Most popular</string>
