@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Preference Screen containing a single ListPreference for sorting movies -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/popular"
+        android:enabled="true"
+        android:title="@"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/top_rated"
+        android:enabled="true"
+        android:title="Top Rated"
+        app:showAsAction="never" />
+
+</menu>
+
+
+<!--<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:title="@string/setting_title">-->
+
+    <!--<ListPreference-->
+        <!--android:defaultValue="@string/settings_sort_by_default"-->
+        <!--android:entries="@array/settings_sort_by_labels"-->
+        <!--android:entryValues="@array/settings_sort_by_values"-->
+        <!--android:key="@string/settings_sort_by_key"-->
+        <!--android:title="@string/settings_sort_by_label" />-->
+<!--</PreferenceScreen>-->

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary color of the app (shown in the app bar) -->
+    <color name="colorPrimary">#F0C800</color>
+    <!-- Primary dark color of the app (shown in the status bar) -->
+    <color name="colorPrimaryDark">#DC8C00</color>
+    <!-- Color of the labels in the DetailActivity -->
+    <color name="colorFontLabel">@color/colorPrimaryDark</color>
+    <!-- Background color of the app -->
+    <color name="colorBackground">#F4DCB2</color>
+</resources>

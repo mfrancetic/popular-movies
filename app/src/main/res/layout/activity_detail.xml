@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Layout that represents details of the chosen movie -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding_scroll_view"
+    tools:context=".DetailActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            style="@style/TextViewValueStyle"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold"
+            tools:text="Bohemian Rhapsody" />
+
+        <ImageView
+            android:id="@+id/movie_poster_thumbnail_image_view"
+            style="@style/ImageViewDetailStyle"
+            android:contentDescription="@string/movie_poster_image"
+            app:layout_constraintTop_toBottomOf="@id/title_text_view"
+            tools:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/plot_synopsis_text_view"
+            style="@style/TextViewValueStyle"
+            app:layout_constraintTop_toBottomOf="@id/movie_poster_thumbnail_image_view"
+            tools:text="Singer Freddie Mercury, guitarist Brian May, drummer Roger Taylor and bass guitarist John Deacon." />
+
+        <TextView
+            android:id="@+id/user_rating_label"
+            style="@style/TextViewLabelStyle"
+            android:paddingBottom="@dimen/padding_label"
+            android:text="@string/user_rating_label"
+            app:layout_constraintBottom_toBottomOf="@id/movie_poster_thumbnail_image_view"
+            app:layout_constraintStart_toEndOf="@id/movie_poster_thumbnail_image_view"
+            app:layout_constraintTop_toTopOf="@id/movie_poster_thumbnail_image_view" />
+
+        <TextView
+            android:id="@+id/user_rating_text_view"
+            style="@style/TextViewValueStyle"
+            app:layout_constraintStart_toEndOf="@id/user_rating_label"
+            app:layout_constraintTop_toTopOf="@id/user_rating_label"
+            tools:text="8.3" />
+
+        <TextView
+            style="@style/TextViewValueStyle"
+            android:text="@string/user_rating_maximum"
+            app:layout_constraintStart_toEndOf="@id/user_rating_text_view"
+            app:layout_constraintTop_toTopOf="@id/user_rating_text_view" />
+
+        <TextView
+            android:id="@+id/release_date_label"
+            style="@style/TextViewLabelStyle"
+            android:text="@string/release_date_label"
+            app:layout_constraintStart_toEndOf="@id/movie_poster_thumbnail_image_view"
+            app:layout_constraintTop_toBottomOf="@id/user_rating_text_view" />
+
+        <TextView
+            android:id="@+id/release_date_text_view"
+            style="@style/TextViewValueStyle"
+            app:layout_constraintStart_toEndOf="@id/release_date_label"
+            app:layout_constraintTop_toTopOf="@id/release_date_label"
+            tools:text="2018-10-24" />
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

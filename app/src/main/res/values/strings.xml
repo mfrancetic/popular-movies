@@ -1,0 +1,45 @@
+<resources>
+    <!-- Title of the application. [CHAR LIMIT = 13]-->
+    <string name="app_name" translatable="false">PopularMovies</string>
+
+    <!-- Title of the DetailActivity [CHAR LIMIT=30]-->
+    <string name="detail_activity_name">Movie details</string>
+
+    <!-- Title of the SettingsActivity [CHAR LIMIT=30] -->
+    <string name="setting_title">Settings</string>
+
+    <!-- Content description of the movie poster [CHAR LIMIT=30] -->
+    <string name="movie_poster_image">Movie poster</string>
+
+    <!-- Error message that appears when there is no internet connectivity [CHAR LIMIT=NONE] -->
+    <string name="no_internet_connection">No internet connection</string>
+
+    <!-- Text to display in the grid when there are no movies [CHAR LIMIT=NONE]-->
+    <string name="no_movies_found">No movies found</string>
+
+    <!-- Maximum possible user rating, displayed in the DetailActivity [CHAR LIMIT=NONE]-->
+    <string name="user_rating_maximum" translatable="false">/10</string>
+
+    <!-- Label for the release date in the DetailActivity [CHAR LIMIT=30] -->
+    <string name="release_date_label">Release date:</string>
+
+    <!-- Label for the user rating in the DetailActivity [CHAR LIMIT=30] -->
+    <string name="user_rating_label">User rating:</string>
+
+    <!-- Strings for Sort-By Preference [CHAR LIMIT=30]-->
+    <string name="settings_sort_by_label">Sort By</string>
+    <string name="settings_sort_by_key" translatable="false">sort_by</string>
+    <string name="settings_sort_by_default" translatable="false">@string/settings_sort_by_most_popular_value</string>
+
+    <!-- Label for sort-by most popular option [CHAR LIMIT=30]-->
+    <string name="settings_sort_by_most_popular_label">Most popular</string>
+
+    <!-- Value of the sort-by most popular option [CHAR LIMIT=NONE]-->
+    <string name="settings_sort_by_most_popular_value" translatable="false">popular</string>
+
+    <!-- Label for sort-by top rated option [CHAR LIMIT=30]-->
+    <string name="settings_sort_by_top_rated_label">Top rated</string>
+
+    <!-- Value of the sort-by top rated option [CHAR LIMIT=NONE]-->
+    <string name="settings_sort_by_top_rated_value" translatable="false">top_rated</string>
+</resources>
