@@ -34,6 +34,12 @@ public class Movie implements Parcelable {
     private final String moviePlotSynopsis;
 
     /**
+     * ID of the movie
+     */
+    private final int movieId;
+
+
+    /**
      * Constructs a new Movie object.
      *
      * @param title        is the title of the movie
@@ -41,13 +47,15 @@ public class Movie implements Parcelable {
      * @param urlPoster    is the url of the movie poster
      * @param userRating   is the user rating of the movie
      * @param plotSynopsis is the plot synopsis of the movie
+     * @param
      */
-    Movie(String title, String releaseDate, String urlPoster, String userRating, String plotSynopsis) {
+    Movie(String title, String releaseDate, String urlPoster, String userRating, String plotSynopsis, int id) {
         this.movieTitle = title;
         this.movieReleaseDate = releaseDate;
         this.movieUrlPoster = urlPoster;
         this.movieUserRating = userRating;
         this.moviePlotSynopsis = plotSynopsis;
+        this.movieId = id;
     }
 
     private Movie(Parcel in) {
@@ -56,6 +64,7 @@ public class Movie implements Parcelable {
         movieUrlPoster = in.readString();
         movieUserRating = in.readString();
         moviePlotSynopsis = in.readString();
+        movieId = in.readInt();
     }
 
     @Override
@@ -99,6 +108,14 @@ public class Movie implements Parcelable {
     }
 
     /**
+     * Returns the ID of the movie
+     */
+    int getId() {
+        return movieId;
+    }
+
+
+    /**
      * Writes the movie title, release date, url of the movie poster, user rating
      * and plot synopsis to the parcel
      */
@@ -109,6 +126,7 @@ public class Movie implements Parcelable {
         parcel.writeString(movieUrlPoster);
         parcel.writeString(movieUserRating);
         parcel.writeString(moviePlotSynopsis);
+        parcel.writeInt(movieId);
     }
 
     /**

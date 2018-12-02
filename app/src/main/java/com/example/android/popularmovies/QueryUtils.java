@@ -172,10 +172,11 @@ final class QueryUtils {
                 String posterUrl = currentMovie.getString("poster_path");
                 String userRating = currentMovie.getString("vote_average");
                 String plotSynopsis = currentMovie.getString("overview");
+                int id = currentMovie.getInt("id");
 
-                /* Create a new Movie object with the title, releaseDate, posterUrl, userRating
-                 and plotSynopsis from the JSON response. */
-                Movie movie = new Movie(title, releaseDate, posterUrl, userRating, plotSynopsis);
+                /* Create a new Movie object with the title, releaseDate, posterUrl, userRating,
+               plotSynopsis and ID from the JSON response. */
+                Movie movie = new Movie(title, releaseDate, posterUrl, userRating, plotSynopsis, id);
 
                 /* Add the new movie to the list of movies. */
                 movies.add(movie);
