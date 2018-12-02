@@ -29,10 +29,10 @@
     <!-- Label for the trailer in the DetailActivity [CHAR LIMIT=30] -->
     <string name="trailers_label">Trailers</string>
 
-    <!-- Label for the review in the DetailActivity [CHAR LIMIT=30] -->
+    <!-- Label for the review 1 in the DetailActivity [CHAR LIMIT=30] -->
     <string name="trailer_1_label">Trailer 1</string>
 
-    <!-- Label for the review in the DetailActivity [CHAR LIMIT=30] -->
+    <!-- Label for the review 2 in the DetailActivity [CHAR LIMIT=30] -->
     <string name="trailer_2_label">Trailer 2</string>
 
     <!-- Label for sort-by most popular option [CHAR LIMIT=30]-->
@@ -49,5 +49,4 @@
 
     <!-- Label for sort-by favorites option [CHAR LIMIT=30]-->
     <string name="settings_sort_by_favorites_label">Favorites</string>
-
 </resources>

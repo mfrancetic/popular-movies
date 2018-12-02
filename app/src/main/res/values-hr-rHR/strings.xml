@@ -9,4 +9,8 @@
     <string name="settings_sort_by_most_popular_label">Popularnost</string>
     <string name="settings_sort_by_top_rated_label">Ocjena</string>
     <string name="review_label">Kritički osvrt</string>
+    <string name="trailer_2_label">Videozapis 2</string>
+    <string name="trailers_label">Videozapisi</string>
+    <string name="trailer_1_label">Videozapis 1</string>
+    <string name="settings_sort_by_favorites_label">Favoriti</string>
 </resources>

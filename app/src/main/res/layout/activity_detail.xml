@@ -47,6 +47,13 @@
             app:layout_constraintTop_toTopOf="@id/user_rating_label"
             tools:text="8.3" />
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_star_rate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/title_text_view" />
+
         <TextView
             style="@style/TextViewValueStyle"
             android:text="@string/user_rating_maximum"
@@ -70,8 +77,8 @@
         <TextView
             android:id="@+id/review_label"
             style="@style/TextViewLabelStyle"
-            android:text="@string/review_label"
             android:paddingTop="@dimen/padding_label"
+            android:text="@string/review_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/plot_synopsis_text_view" />
 
@@ -85,8 +92,8 @@
         <TextView
             android:id="@+id/trailers_label"
             style="@style/TextViewLabelStyle"
-            android:text="@string/trailers_label"
             android:paddingTop="@dimen/padding_label"
+            android:text="@string/trailers_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/review_text_view" />
 
@@ -94,17 +101,16 @@
             android:id="@+id/play_trailer_1_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/trailers_label"
             android:src="@drawable/ic_play_arrow"
-            />
+            app:layout_constraintTop_toBottomOf="@id/trailers_label" />
 
         <TextView
             android:id="@+id/trailer_1_text_view"
             style="@style/TextViewValueStyle"
-            app:layout_constraintStart_toEndOf="@id/play_trailer_1_button"
-            app:layout_constraintTop_toTopOf="@id/play_trailer_1_button"
+            android:text="@string/trailer_1_label"
             app:layout_constraintBottom_toBottomOf="@id/play_trailer_1_button"
-            android:text="@string/trailer_1_label" />
+            app:layout_constraintStart_toEndOf="@id/play_trailer_1_button"
+            app:layout_constraintTop_toTopOf="@id/play_trailer_1_button" />
 
 
         <ImageButton
@@ -112,16 +118,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_play_arrow"
-            app:layout_constraintTop_toBottomOf="@id/play_trailer_1_button"
-            />
+            app:layout_constraintTop_toBottomOf="@id/play_trailer_1_button" />
 
         <TextView
             android:id="@+id/trailer_2_text_view"
             style="@style/TextViewValueStyle"
-            app:layout_constraintStart_toEndOf="@id/play_trailer_2_button"
-            app:layout_constraintTop_toTopOf="@id/play_trailer_2_button"
+            android:text="@string/trailer_2_label"
             app:layout_constraintBottom_toBottomOf="@id/play_trailer_2_button"
-            android:text="@string/trailer_2_label" />
+            app:layout_constraintStart_toEndOf="@id/play_trailer_2_button"
+            app:layout_constraintTop_toTopOf="@id/play_trailer_2_button" />
 
 
     </android.support.constraint.ConstraintLayout>
