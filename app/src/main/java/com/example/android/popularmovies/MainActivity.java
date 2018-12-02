@@ -127,8 +127,10 @@ public class MainActivity extends AppCompatActivity
                 int selectedPosition = parent.getSelectedItemPosition();
                 if (selectedPosition == 0) {
                     selectedOption = getString(R.string.settings_sort_by_most_popular_value);
-                } else {
+                } else if (selectedPosition == 1){
                     selectedOption = getString(R.string.settings_sort_by_top_rated_value);
+                } else if (selectedPosition == 2) {
+                    selectedOption=getString(R.string.settings_sort_by_top_rated_value);
                 }
 
                 /* Clear the GridView as a new query will be kicked off */
