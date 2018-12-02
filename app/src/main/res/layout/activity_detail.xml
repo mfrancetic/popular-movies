@@ -67,4 +67,6 @@
             app:layout_constraintTop_toTopOf="@id/release_date_label"
             tools:text="2018-10-24" />
     </android.support.constraint.ConstraintLayout>
+
+
 </ScrollView>
