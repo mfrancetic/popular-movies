@@ -1,12 +1,27 @@
 package com.example.android.popularmovies;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
  * A Movie object contains information related to a single movie
  */
+@Entity(tableName = "movie")
 public class Movie implements Parcelable {
+
+
+    /** Database generated ID of the movie */
+//    private int id;
+
+
+    /**
+     * ID of the movie
+     */
+    @PrimaryKey
+    private final int movieId;
 
     /**
      * Title of the movie
@@ -33,38 +48,41 @@ public class Movie implements Parcelable {
      */
     private final String moviePlotSynopsis;
 
-    /**
-     * ID of the movie
-     */
-    private final int movieId;
-
 
     /**
      * Constructs a new Movie object.
      *
-     * @param title        is the title of the movie
-     * @param releaseDate  is the release date of the movie
-     * @param urlPoster    is the url of the movie poster
-     * @param userRating   is the user rating of the movie
-     * @param plotSynopsis is the plot synopsis of the movie
+     * @param movieId           is the ID of the movie
+     * @param movieTitle        is the title of the movie
+     * @param movieReleaseDate  is the release date of the movie
+     * @param movieUrlPoster    is the url of the movie poster
+     * @param movieUserRating   is the user rating of the movie
+     * @param moviePlotSynopsis is the plot synopsis of the movie
      * @param
      */
-    Movie(String title, String releaseDate, String urlPoster, String userRating, String plotSynopsis, int id) {
-        this.movieTitle = title;
-        this.movieReleaseDate = releaseDate;
-        this.movieUrlPoster = urlPoster;
-        this.movieUserRating = userRating;
-        this.moviePlotSynopsis = plotSynopsis;
-        this.movieId = id;
+
+    Movie(int movieId, String movieTitle, String movieReleaseDate, String movieUrlPoster, String movieUserRating, String moviePlotSynopsis) {
+        this.movieId = movieId;
+        this.movieTitle = movieTitle;
+        this.movieReleaseDate = movieReleaseDate;
+        this.movieUrlPoster = movieUrlPoster;
+        this.movieUserRating = movieUserRating;
+        this.moviePlotSynopsis = moviePlotSynopsis;
     }
 
+//    Movie(int id, int movieId, String movieTitle) {
+//        this.id = id;
+//        this.movieId = movieId;
+//        this.movieTitle = movieTitle;
+//    }
+
     private Movie(Parcel in) {
+        movieId = in.readInt();
         movieTitle = in.readString();
         movieReleaseDate = in.readString();
         movieUrlPoster = in.readString();
         movieUserRating = in.readString();
         moviePlotSynopsis = in.readString();
-        movieId = in.readInt();
     }
 
     @Override
@@ -75,42 +93,49 @@ public class Movie implements Parcelable {
     /**
      * Returns the title of the movie
      */
-    public String getTitle() {
+    public String getMovieTitle() {
         return movieTitle;
     }
 
     /**
      * Returns the release date of the movie
      */
-    String getReleaseDate() {
+    String getMovieReleaseDate() {
         return movieReleaseDate;
     }
 
     /**
      * Returns the url of the movie poster
      */
-    String getUrlPoster() {
+    String getMovieUrlPoster() {
         return movieUrlPoster;
     }
 
     /**
      * Returns the user rating of the movie
      */
-     String getUserRating() {
+    String getMovieUserRating() {
         return movieUserRating;
     }
 
     /**
      * Returns the plot synopsis of the movie
      */
-     String getPlotSynopsis() {
+    String getMoviePlotSynopsis() {
         return moviePlotSynopsis;
     }
+
+//    /**
+//     * Returns the databse ID of the movie
+//     */
+//    int getId() {
+//        return id;
+//    }
 
     /**
      * Returns the ID of the movie
      */
-    int getId() {
+    int getMovieId() {
         return movieId;
     }
 
@@ -121,12 +146,12 @@ public class Movie implements Parcelable {
      */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(movieId);
         parcel.writeString(movieTitle);
         parcel.writeString(movieReleaseDate);
         parcel.writeString(movieUrlPoster);
         parcel.writeString(movieUserRating);
         parcel.writeString(moviePlotSynopsis);
-        parcel.writeInt(movieId);
     }
 
     /**

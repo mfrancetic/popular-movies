@@ -11,16 +11,15 @@ import java.util.List;
 @Dao
 public interface MovieDao {
 
-    @Query("SELECT * FROM movie ORDER BY id")
-    LiveData<List<MovieEntry>> loadAllFavoriteMovies();
+    @Query("SELECT * FROM movie ORDER BY movieId")
+    LiveData<List<Movie>> loadAllFavoriteMovies();
 
     @Insert
-    void insertMovie(MovieEntry movieEntry);
+    void insertMovie(Movie movieEntry);
 
     @Delete
-    void deleteMovie(MovieEntry movieEntry);
+    void deleteMovie(Movie movieEntry);
 
-    @Query("SELECT * FROM movie WHERE id = :id")
-    LiveData<MovieEntry> loadMovieById(int id);
-
+    @Query("SELECT * FROM movie WHERE movieId = :movieId")
+    LiveData<Movie> loadMovieById(int movieId);
 }

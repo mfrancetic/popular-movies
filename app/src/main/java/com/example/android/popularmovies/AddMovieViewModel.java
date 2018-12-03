@@ -6,13 +6,13 @@ import android.arch.persistence.room.Database;
 
 public class AddMovieViewModel extends ViewModel {
 
-    private LiveData<MovieEntry> movie;
+    private LiveData<Movie> movie;
 
     public AddMovieViewModel(AppDatabase database, int movieId) {
         movie = database.movieDao().loadMovieById(movieId);
     }
 
-    public LiveData<MovieEntry> getMovie() {
+    public LiveData<Movie> getMovie() {
         return movie;
     }
 }

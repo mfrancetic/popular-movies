@@ -12,7 +12,7 @@ public class MainViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = MainViewModel.class.getSimpleName();
 
-    private LiveData<List<MovieEntry>> movies;
+    private LiveData<List<Movie>> movies;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -21,7 +21,7 @@ public class MainViewModel extends AndroidViewModel {
         movies = database.movieDao().loadAllFavoriteMovies();
     }
 
-    public LiveData<List<MovieEntry>> getMovies() {
+    public LiveData<List<Movie>> getMovies() {
         return movies;
     }
 }

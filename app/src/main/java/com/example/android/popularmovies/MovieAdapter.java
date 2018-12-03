@@ -82,7 +82,7 @@ class MovieAdapter extends ArrayAdapter<Movie> {
      * Return the formatted poster path Uri
      */
     static Uri formatPosterPath(Movie selectedMovie) {
-        String posterPath = selectedMovie.getUrlPoster();
+        String posterPath = selectedMovie.getMovieUrlPoster();
         String fullPosterPath = BASE_POSTER_URL + posterSize + posterPath;
         return Uri.parse(fullPosterPath);
     }

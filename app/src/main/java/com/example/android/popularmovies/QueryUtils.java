@@ -176,7 +176,7 @@ final class QueryUtils {
 
                 /* Create a new Movie object with the title, releaseDate, posterUrl, userRating,
                plotSynopsis and ID from the JSON response. */
-                Movie movie = new Movie(title, releaseDate, posterUrl, userRating, plotSynopsis, id);
+                Movie movie = new Movie(id, title, releaseDate, posterUrl, userRating, plotSynopsis);
 
                 /* Add the new movie to the list of movies. */
                 movies.add(movie);

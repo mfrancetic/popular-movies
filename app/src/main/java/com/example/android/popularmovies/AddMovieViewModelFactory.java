@@ -9,7 +9,7 @@ public class AddMovieViewModelFactory extends ViewModelProvider.NewInstanceFacto
     private final AppDatabase movieDatabase;
     private final int movieId;
 
-    public AddMovieViewModelFactory(AppDatabase database, int id) {
+     AddMovieViewModelFactory(AppDatabase database, int id) {
         movieDatabase = database;
         movieId = id;
     }
