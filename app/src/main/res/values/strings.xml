@@ -49,4 +49,11 @@
 
     <!-- Label for sort-by favorites option [CHAR LIMIT=30]-->
     <string name="settings_sort_by_favorites_label">Favorites</string>
+
+    <!-- Text for the toast after adding the movie to the Favorites list [CHAR LIMIT=NONE] -->
+    <string name="toast_added_to_favorites">The movie has been added to the Favorites list.</string>
+
+    <!-- Text for the toast after deleting the movie from the Favorites list [CHAR LIMIT=NONE] -->
+    <string name="toast_deleted_from_favorites">The movie has been deleted from the Favorites list.</string>
+
 </resources>

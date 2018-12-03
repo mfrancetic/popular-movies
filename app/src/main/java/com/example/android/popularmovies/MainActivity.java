@@ -58,6 +58,10 @@ public class MainActivity extends AppCompatActivity
      */
     private String selectedOption;
 
+
+    private AppDatabase appDatabase;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

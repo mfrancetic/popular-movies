@@ -48,6 +48,7 @@
             tools:text="8.3" />
 
         <ImageButton
+            android:id="@+id/favorites_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_star_rate"
