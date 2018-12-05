@@ -1,23 +1,42 @@
 package com.example.android.popularmovies;
 
+import android.app.DownloadManager;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Looper;
+import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.URL;
+
 public class DetailActivity extends AppCompatActivity {
+
+    /**
+     * URL for the review from The MovieDB
+     */
+    private static final String BASE_TRAILERS_REVIEWS_URL = "https://api.themoviedb.org/3/movie/";
+
+    /**
+     * URL for the trailers from The MovieDB
+     */
+    private static final String TRAILERS_URL = "/trailers";
+
+    /**
+     * URL for the reviews from The MovieDB
+     */
+    private static final String REVIEWS_URL = "/reviews";
+
 
     // Extra for the movie ID to be received in the intent
 //    public static final String EXTRA_MOVIE_ID = "extraMovieId";
@@ -48,14 +67,27 @@ public class DetailActivity extends AppCompatActivity {
 
         database = AppDatabase.getInstance(getApplicationContext());
 
-//        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_MOVIE_ID)) {
-//            movieId = savedInstanceState.getInt(INSTANCE_MOVIE_ID, DEFAULT_MOVIE_ID);
-//        }
 
 
         generateUI();
+//        generateTrailers();
+//        generateReviews();
 //        generateUI(movie);
     }
+//
+//    private class ReviewAsyncTask extends AsyncTask<String, Void, Review[]> {
+//
+//        @Override
+//        protected Review[] doInBackground(String... strings) {
+//            try {
+//
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
+
 
 //    @Override
 //    protected void onSaveInstanceState(Bundle outState) {
@@ -144,6 +176,7 @@ public class DetailActivity extends AppCompatActivity {
                     .load(fullPosterPathUri)
                     .into(moviePosterImageView);
 
+
             addToFavoritesButton.setOnClickListener(new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View v) {
@@ -186,5 +219,23 @@ public class DetailActivity extends AppCompatActivity {
 
         }
 
+
     }
+
+//    /**
+//     * Return the formatted review path Uri
+//     */
+//    static String formatReviewPath(Movie currentMovie) {
+//        int movieId = currentMovie.getMovieId();
+//        return  BASE_TRAILERS_REVIEWS_URL + String.valueOf(movieId) + REVIEWS_URL;
+//    }
+//
+//    /**
+//     * Return the formatted trailer path Uri
+//     */
+//    static String formatTrailerPath(Movie currentMovie) {
+//        int movieId = currentMovie.getMovieId();
+//        return  BASE_TRAILERS_REVIEWS_URL + String.valueOf(movieId) + TRAILERS_URL;
+//    }
+
 }

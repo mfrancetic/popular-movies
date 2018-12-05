@@ -93,7 +93,7 @@ public class Movie implements Parcelable {
     /**
      * Returns the title of the movie
      */
-    public String getMovieTitle() {
+     String getMovieTitle() {
         return movieTitle;
     }
 
