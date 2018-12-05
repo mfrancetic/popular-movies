@@ -28,6 +28,8 @@ class MovieAdapter extends ArrayAdapter<Movie> {
      */
     private static final String posterSize = "w185";
 
+    private List<Movie> movieEntries;
+
     /**
      * Constructs a new MovieAdapter.
      *
@@ -86,4 +88,11 @@ class MovieAdapter extends ArrayAdapter<Movie> {
         String fullPosterPath = BASE_POSTER_URL + posterSize + posterPath;
         return Uri.parse(fullPosterPath);
     }
+
+
+    public void setMovies(List<Movie> movies) {
+        movieEntries = movies;
+        notifyDataSetChanged();
+    }
+
 }

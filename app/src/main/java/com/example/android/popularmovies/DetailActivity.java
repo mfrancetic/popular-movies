@@ -36,10 +36,14 @@ public class DetailActivity extends AppCompatActivity {
 
     boolean isFavorite;
 
+    ImageButton addToFavoritesButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        addToFavoritesButton = findViewById(R.id.favorites_button);
 
 
         database = AppDatabase.getInstance(getApplicationContext());
@@ -79,10 +83,6 @@ public class DetailActivity extends AppCompatActivity {
         /* Get the Intent and check if it is null. */
         Intent intent = getIntent();
         if (intent != null) {
-//            if (movieId == DEFAULT_MOVIE_ID) {
-
-            // populate the UI
-//                int movieId = intent.getIntExtra(EXTRA_MOVIE_ID, DEFAULT_MOVIE_ID);
 
             /* If the intent exists, get the currentMovie object from the parcelableExtra */
             final Movie currentMovie = intent.getParcelableExtra("currentMovie");
@@ -90,99 +90,101 @@ public class DetailActivity extends AppCompatActivity {
             /* Get the id of the current movie */
             final int id = currentMovie.getMovieId();
 
-//            Movie movieInDatabase = database.movieDao().loadMovieById(id);
-//            int movieInDatabaseId = movieInDatabase.getMovieId();
+            LiveData<Movie> movieInDatabase = database.movieDao().loadMovieById(id);
+
+            /* Get the title of the current movie and set it to the titleTextView */
+            final String title = currentMovie.getMovieTitle();
+            titleTextView.setText(title);
+
+            /* Get the release date of the current movie and set it to the releaseDateTextView */
+            final String releaseDate = currentMovie.getMovieReleaseDate();
+            releaseDateTextView.setText(releaseDate);
+
+            /* Get the user rating of the current movie and set it to the userRatingTextView */
+            final String userRating = currentMovie.getMovieUserRating();
+            userRatingTextView.setText(userRating);
+
+            /* Get the plot synopsis of the current movie and set it to the plotSynopsisTextView */
+            final String plotSynopsis = currentMovie.getMoviePlotSynopsis();
+            plotSynopsisTextView.setText(plotSynopsis);
 
 
-//            if (movieInDatabase != null) {
-//
-//                if (id == movieInDatabaseId) {
-//                    isFavorite = true;
-//                } else {
-//                    isFavorite = false;
-//                }
-//            }
+            // COMPLETED (10) Declare a AddTaskViewModelFactory using mDb and mTaskId
+            AddMovieViewModelFactory factory = new AddMovieViewModelFactory(database, id);
+            // COMPLETED (11) Declare a AddTaskViewModel variable and initialize it by calling ViewModelProviders.of
+            // for that use the factory created above AddTaskViewModel
+            final AddMovieViewModel viewModel
+                    = ViewModelProviders.of(this, factory).get(AddMovieViewModel.class);
 
+            // COMPLETED (12) Observe the LiveData object in the ViewModel. Use it also when
+            // removing the observer
+            viewModel.getMovie().observe(this, new Observer<Movie>() {
+                @Override
+                public void onChanged(@Nullable Movie movieInDatabase) {
+                    viewModel.getMovie().removeObserver(this);
 
-                /* Get the title of the current movie and set it to the titleTextView */
-                final String title = currentMovie.getMovieTitle();
-                titleTextView.setText(title);
-
-                /* Get the release date of the current movie and set it to the releaseDateTextView */
-                final String releaseDate = currentMovie.getMovieReleaseDate();
-                releaseDateTextView.setText(releaseDate);
-
-                /* Get the user rating of the current movie and set it to the userRatingTextView */
-                final String userRating = currentMovie.getMovieUserRating();
-                userRatingTextView.setText(userRating);
-
-                /* Get the plot synopsis of the current movie and set it to the plotSynopsisTextView */
-                final String plotSynopsis = currentMovie.getMoviePlotSynopsis();
-                plotSynopsisTextView.setText(plotSynopsis);
-
-
-                // COMPLETED (10) Declare a AddTaskViewModelFactory using mDb and mTaskId
-                AddMovieViewModelFactory factory = new AddMovieViewModelFactory(database, id);
-                // COMPLETED (11) Declare a AddTaskViewModel variable and initialize it by calling ViewModelProviders.of
-                // for that use the factory created above AddTaskViewModel
-                final AddMovieViewModel viewModel
-                        = ViewModelProviders.of(this, factory).get(AddMovieViewModel.class);
-
-                // COMPLETED (12) Observe the LiveData object in the ViewModel. Use it also when
-                // removing the observer
-                viewModel.getMovie().observe(this, new Observer<Movie>() {
-                    @Override
-                    public void onChanged(@Nullable Movie movie) {
-                        viewModel.getMovie().removeObserver(this);
-
-
-
-
-//                      generateUI(movie);
-//                        generateUI();
+                    if (movieInDatabase != null) {
+                        isFavorite = true;
+                        addToFavoritesButton.setImageResource(R.drawable.ic_star_rate);
+                    } else {
+                        isFavorite = false;
+                        addToFavoritesButton.setImageResource(R.drawable.ic_star_empty);
                     }
-                });
 
-
-//
-//            MovieEntry movieInDatabase = database.movieDao().loadMovieById(id);
-//            int movieInDatabaseId = movieInDatabase.getMovieId();
+                }
+            });
 
             /* Get the full poster path Uri of the current movie and using the Picasso library
               load it into the moviePosterImageView */
-                final String posterPath = currentMovie.getMovieUrlPoster();
+            final String posterPath = currentMovie.getMovieUrlPoster();
 
-                Uri fullPosterPathUri = MovieAdapter.formatPosterPath(currentMovie);
-                com.squareup.picasso.Picasso
-                        .with(context)
-                        .load(fullPosterPathUri)
-                        .into(moviePosterImageView);
+            Uri fullPosterPathUri = MovieAdapter.formatPosterPath(currentMovie);
+            com.squareup.picasso.Picasso
+                    .with(context)
+                    .load(fullPosterPathUri)
+                    .into(moviePosterImageView);
 
-                final ImageButton addToFavoritesButton = findViewById(R.id.favorites_button);
-                addToFavoritesButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            addToFavoritesButton.setOnClickListener(new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
 
-                        final Movie movie = new Movie(id, title, releaseDate, posterPath, userRating, plotSynopsis);
-                        AppExecutors.getExecutors().diskIO().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                database.movieDao().insertMovie(movie);
+                                                            final Movie movie = new Movie(id, title, releaseDate, posterPath, userRating, plotSynopsis);
 
-                                // TODO if (isFavorite) {
-                                // database.movieDao().insertMovie(movie);
-                                // else {
-                                // database.movieDao().deleteMovie(movie);
-                                // }
-//                            Looper.prepare();
-//                            Toast.makeText(getApplicationContext(), getString(R.string.toast_added_to_favorites), Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                        });
+                                                            AppExecutors.getExecutors().diskIO().execute(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    if (!isFavorite) {
+                                                                        database.movieDao().insertMovie(movie);
+                                                                        isFavorite = true;
 
-                    }
-                });
-            }
+                                                                    } else {
+                                                                        database.movieDao().deleteMovie(movie);
+                                                                        isFavorite = false;
+                                                                    }
+                                                                    runOnUiThread(new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            if (isFavorite) {
+                                                                                addToFavoritesButton.setImageResource(R.drawable.ic_star_rate);
+                                                                                Toast.makeText(context, getString(R.string.toast_added_to_favorites), Toast.LENGTH_SHORT).show();
+                                                                            } else {
+                                                                                addToFavoritesButton.setImageResource(R.drawable.ic_star_empty);
+                                                                                Toast.makeText(getApplicationContext(), getString(R.string.toast_deleted_from_favorites), Toast.LENGTH_SHORT).show();
+                                                                            }
+                                                                        }
+                                                                    });
+
+                                                                }
+                                                            });
+
+                                                        }
+
+
+                                                    }
+
+            );
 
         }
+
     }
+}

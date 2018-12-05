@@ -1,14 +1,20 @@
 package com.example.android.popularmovies;
 
 import android.app.LoaderManager;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,6 +28,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<Movie>> {
+
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     /**
      * URL for the movie data from The MovieDB database
@@ -104,6 +112,9 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+
+        appDatabase = AppDatabase.getInstance(getApplicationContext());
+//        loadFavorites();
     }
 
     /**
@@ -134,7 +145,9 @@ public class MainActivity extends AppCompatActivity
                 } else if (selectedPosition == 1){
                     selectedOption = getString(R.string.settings_sort_by_top_rated_value);
                 } else if (selectedPosition == 2) {
-                    selectedOption=getString(R.string.settings_sort_by_top_rated_value);
+                    loadFavorites();
+
+
                 }
 
                 /* Clear the GridView as a new query will be kicked off */
@@ -152,6 +165,36 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
+    void loadFavorites() {
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable List<Movie> movies) {
+                Log.d(LOG_TAG, "Updating list of tasks from LiveData in ViewModel");
+                movieAdapter.setMovies(movies);
+
+
+                LiveData<List<Movie>> moviesList = appDatabase.movieDao().loadAllFavoriteMovies();
+
+
+                //                LiveData<Movie> movie = movieViewModel.getMovie();
+
+//                ArraymoviesList.getValue().toArray();
+
+//                for (int i = 0; i < moviesList.getValue().size(); i++) {
+//                    moviesList.getValue().listIterator().
+//                    Movie movie = appDatabase.movieDao().loadMovieById(i);
+//
+//                })
+//                moviesList.
+
+
+//                movieAdapter.formatPosterPath(movie);
+
             }
         });
     }
