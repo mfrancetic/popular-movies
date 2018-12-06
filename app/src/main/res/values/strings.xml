@@ -26,14 +26,11 @@
     <!-- Label for the review in the DetailActivity [CHAR LIMIT=30] -->
     <string name="review_label">Review</string>
 
+    <!-- Label for the full review button in the DetailActivity [CHAR LIMIT = 20] -->
+    <string name="review_button">Full review</string>
+
     <!-- Label for the trailer in the DetailActivity [CHAR LIMIT=30] -->
-    <string name="trailers_label">Trailers</string>
-
-    <!-- Label for the review 1 in the DetailActivity [CHAR LIMIT=30] -->
-    <string name="trailer_1_label">Trailer 1</string>
-
-    <!-- Label for the review 2 in the DetailActivity [CHAR LIMIT=30] -->
-    <string name="trailer_2_label">Trailer 2</string>
+    <string name="trailer_label">Trailer</string>
 
     <!-- Label for sort-by most popular option [CHAR LIMIT=30]-->
     <string name="settings_sort_by_most_popular_label">Most popular</string>

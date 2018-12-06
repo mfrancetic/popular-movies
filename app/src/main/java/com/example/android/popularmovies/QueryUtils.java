@@ -1,5 +1,6 @@
 package com.example.android.popularmovies;
 
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,6 +24,21 @@ import java.util.List;
  */
 final class QueryUtils {
 
+
+    /**
+     * URL for the review from The MovieDB
+     */
+    private static final String BASE_TRAILERS_REVIEWS_URL = "https://api.themoviedb.org/3/movie/";
+
+    /**
+     * URL for the trailers from The MovieDB
+     */
+     static final String TRAILER_QUERY = "trailers";
+
+    /**
+     * URL for the reviews from The MovieDB
+     */
+     static final String REVIEW_QUERY = "reviews";
     /**
      * Tag for the log messages
      */
@@ -67,10 +83,36 @@ final class QueryUtils {
         return url;
     }
 
+     static URL createReviewTrailerUrl(String movieId, String query) {
+        /* API key parameter that will be appended to the URL */
+        String API_PARAM = "api_key";
+
+        URL url = null;
+
+        Uri baseUri = Uri.parse(BASE_TRAILERS_REVIEWS_URL);
+
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+        uriBuilder.appendEncodedPath(movieId)
+                .appendEncodedPath(query)
+                .appendQueryParameter(API_PARAM, MainActivity.apiKey)
+                .build();
+        try {
+            url = new URL(uriBuilder.toString());
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "Problem building the URL", e);
+        }
+        return url;
+    }
+
+
+
+    /* COMPLETED createReviewTrailerUrl - (example MainActivity.onCreateLoader)*/
+
+
     /**
      * Make an HTTP request to the given URL and return a String as the response.
      */
-    private static String makeHttpRequest(URL url) throws IOException {
+     static String makeHttpRequest(URL url) throws IOException {
 
         /* Define the read time out, connect time out, success response code and request method */
         int READ_TIME_OUT = 10000;
@@ -176,7 +218,7 @@ final class QueryUtils {
 
                 /* Create a new Movie object with the title, releaseDate, posterUrl, userRating,
                plotSynopsis and ID from the JSON response. */
-                Movie movie = new Movie(id, title, releaseDate, posterUrl, userRating, plotSynopsis);
+                Movie movie = new Movie(id, title, releaseDate, posterUrl, userRating, plotSynopsis, null, null, null, null);
 
                 /* Add the new movie to the list of movies. */
                 movies.add(movie);
@@ -325,9 +367,6 @@ final class QueryUtils {
         /* Return the list of movies. */
         return reviews;
     }
-
-
-
 
 
 }

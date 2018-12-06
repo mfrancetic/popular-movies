@@ -1,6 +1,8 @@
 package com.example.android.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,49 +13,66 @@ import android.widget.TextView;
 
 import java.util.List;
 
-class TrailerAdapter extends ArrayAdapter<Trailer> {
+class TrailerAdapter extends ArrayAdapter<Movie> {
 
-    private List<Trailer> trailersList;
+    private List<Movie> movies;
 
-    TrailerAdapter(Context context, List<Trailer> trailers) {
-        super(context, 0, trailers);
+    ImageButton trailerImageButton;
+
+    String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=\"";
+
+    Uri trailerUri;
+
+
+    TrailerAdapter(Context context, List<Movie> movies) {
+
+        super(context, 0, movies);
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
-        TextView trailerNameTextView;
-        ImageButton trailerImageButton;
 
           /* Check if there is an existing list item view (convertView) that we can reuse.
          Otherwise if convertView is null, then inflate a new listItem layout. */
-        if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_list_item, parent,
-                    false);
-        }
+//        if (convertView == null) {
+//            convertView = LayoutInflater.from(getContext()).inflate(R.layout.trailer_list_item, parent,
+//                    false);
+//        }
 
         /* Find the trailer at the given position in the list of movies */
-        Trailer currentTrailer = getItem(position);
+        Movie currentMovie = getItem(position);
 
         /* Get context and find the listItemView */
-        Context context = getContext();
-        trailerNameTextView = convertView.findViewById(R.id.trailer_text_view);
+        final Context context = getContext();
         trailerImageButton = convertView.findViewById(R.id.play_trailer_button);
 
-//        trailerImageButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        String trailerUrlPath = currentMovie.getTrailerUrlPath();
+          trailerUri = Uri.parse(TRAILER_BASE_URL + trailerUrlPath);
 
+
+
+
+        playMovieTrailer(trailerUri);
 
         return convertView;
     }
 
-    public void setTrailers (List<Trailer> trailers) {
-        trailersList = trailers;
-        notifyDataSetChanged();
+    void playMovieTrailer(final Uri trailerUri) {
+        trailerImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /* COMPLETED ACTION_VIEW */
+                Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
+                playTrailerIntent.setData(trailerUri);
+                getContext().startActivity(playTrailerIntent);
+            }
+        });
     }
+
+//    public void setTrailers (List<Trailer> trailers) {
+//        trailersList = trailers;
+//        notifyDataSetChanged();
+//    }
 }
