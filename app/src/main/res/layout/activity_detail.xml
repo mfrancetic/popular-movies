@@ -95,6 +95,7 @@
             android:id="@+id/review_author_text_view"
             style="@style/TextViewValueStyle"
             app:layout_constraintTop_toBottomOf="@id/review_text_view"
+            android:textStyle="italic"
             tools:text="Author" />
 
         <Button
@@ -102,8 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/review_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/review_text_view"
+            app:layout_constraintTop_toBottomOf="@id/review_author_text_view"
             />
 
         <TextView
@@ -112,7 +112,7 @@
             android:paddingTop="@dimen/padding_label"
             android:text="@string/trailer_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/review_text_view" />
+            app:layout_constraintTop_toBottomOf="@id/full_review_button" />
 
         <ImageButton
             android:id="@+id/play_trailer_button"

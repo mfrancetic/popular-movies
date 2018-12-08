@@ -22,6 +22,7 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,25 +143,40 @@ public class MainActivity extends AppCompatActivity
                 int selectedPosition = parent.getSelectedItemPosition();
                 if (selectedPosition == 0) {
                     selectedOption = getString(R.string.settings_sort_by_most_popular_value);
-                } else if (selectedPosition == 1){
+
+                    /* Clear the GridView as a new query will be kicked off */
+                    movieAdapter.clear();
+
+                    /* Hide the empty state text view as the loading indicator will be displayed */
+                    emptyTextView.setVisibility(View.GONE);
+
+                    /* Show the loading indicator while new date is being fetched */
+                    loadingIndicator.setVisibility(View.VISIBLE);
+
+                    /* Restart the loader to query again The MovieDB as the query settings have been updated */
+                    getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+
+                } else if (selectedPosition == 1) {
                     selectedOption = getString(R.string.settings_sort_by_top_rated_value);
+
+
+
+                    /* Clear the GridView as a new query will be kicked off */
+                    movieAdapter.clear();
+
+                    /* Hide the empty state text view as the loading indicator will be displayed */
+                    emptyTextView.setVisibility(View.GONE);
+
+                    /* Show the loading indicator while new date is being fetched */
+                    loadingIndicator.setVisibility(View.VISIBLE);
+
+                    /* Restart the loader to query again The MovieDB as the query settings have been updated */
+                    getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+
                 } else if (selectedPosition == 2) {
                     loadFavorites();
-
-
                 }
 
-                /* Clear the GridView as a new query will be kicked off */
-                movieAdapter.clear();
-
-                /* Hide the empty state text view as the loading indicator will be displayed */
-                emptyTextView.setVisibility(View.GONE);
-
-                /* Show the loading indicator while new date is being fetched */
-                loadingIndicator.setVisibility(View.VISIBLE);
-
-                /* Restart the loader to query again The MovieDB as the query settings have been updated */
-                getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
             }
 
             @Override
@@ -169,35 +185,53 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+
     void loadFavorites() {
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
             @Override
-            public void onChanged(@Nullable List<Movie> movies) {
+            public void onChanged(@Nullable final List<Movie> movies) {
                 Log.d(LOG_TAG, "Updating list of tasks from LiveData in ViewModel");
-                movieAdapter.setMovies(movies);
 
 
-                LiveData<List<Movie>> moviesList = appDatabase.movieDao().loadAllFavoriteMovies();
+                final LiveData<List<Movie>> moviesList = appDatabase.movieDao().loadAllFavoriteMovies();
 
+                AppExecutors.getExecutors().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (moviesList == null) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), getString(R.string.toast_no_favorite_movies),
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    /* Clear the GridView as a new query will be kicked off */
+                                    movieAdapter.clear();
 
-                //                LiveData<Movie> movie = movieViewModel.getMovie();
+                                    /* Hide the empty state text view as the loading indicator will be displayed */
+                                    emptyTextView.setVisibility(View.GONE);
 
-//                ArraymoviesList.getValue().toArray();
+                                    /* Show the loading indicator while new date is being fetched */
+                                    loadingIndicator.setVisibility(View.VISIBLE);
+                                    movieAdapter.notifyDataSetChanged();
+                                    movieAdapter.setMovies(movies);
+                                }
+                            });
 
-//                for (int i = 0; i < moviesList.getValue().size(); i++) {
-//                    moviesList.getValue().listIterator().
-//                    Movie movie = appDatabase.movieDao().loadMovieById(i);
-//
-//                })
-//                moviesList.
+                        }
 
-
-//                movieAdapter.formatPosterPath(movie);
-
+                    }
+                });
             }
         });
     }
+
 
     /**
      * Initialize the loader

@@ -15,6 +15,8 @@ import java.util.List;
 
 class TrailerAdapter extends ArrayAdapter<Movie> {
 
+    /* TODO izbrisat klasu TrailerAdapter i ReveiwAdapter? (to je za ListView)  */
+
     private List<Movie> movies;
 
     ImageButton trailerImageButton;

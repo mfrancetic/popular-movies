@@ -53,4 +53,7 @@
     <!-- Text for the toast after deleting the movie from the Favorites list [CHAR LIMIT=NONE] -->
     <string name="toast_deleted_from_favorites">The movie has been deleted from the Favorites list.</string>
 
+    <!-- Text for the toast if there are no movies in the Favorites list [CHAR LIMIT=NONE] -->
+    <string name="toast_no_favorite_movies">There are no movies in the Favorites list.</string>
+
 </resources>

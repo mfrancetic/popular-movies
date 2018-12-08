@@ -63,6 +63,18 @@ public class DetailActivity extends AppCompatActivity {
 
     ImageButton addToFavoritesButton;
 
+    TextView reviewLabelTextView;
+
+    Button fullReviewButton;
+
+    TextView reviewAuthorTextView;
+
+    TextView reviewTextView;
+
+    TextView trailerTextView;
+
+    TextView trailerLabelTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,23 +83,93 @@ public class DetailActivity extends AppCompatActivity {
         addToFavoritesButton = findViewById(R.id.favorites_button);
         playTrailerButton = findViewById(R.id.play_trailer_button);
         database = AppDatabase.getInstance(getApplicationContext());
+        fullReviewButton = findViewById(R.id.full_review_button);
+        reviewAuthorTextView = findViewById(R.id.review_author_text_view);
+        reviewTextView = findViewById(R.id.review_text_view);
+        trailerTextView = findViewById(R.id.trailer_text_view);
+        trailerLabelTextView = findViewById(R.id.trailer_label);
+        reviewLabelTextView = findViewById(R.id.review_label);
 
         generateUI();
     }
 
-//    private class ReviewAsyncTask extends AsyncTask<String, Void, List<Movie>> {
-//
-//        @Override
-//        protected List<Movie> doInBackground(String... strings) {
-//            try {
-//
-//
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    private class ReviewAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            List<Movie> movies = new ArrayList<>();
+
+            String reviewUrl = null;
+
+            int id = currentMovie.getMovieId();
+
+            try {
+                URL url = QueryUtils.createReviewTrailerUrl(String.valueOf(id), QueryUtils.REVIEW_QUERY);
+                String reviewJson = QueryUtils.makeHttpRequest(url);
+
+                /* Create a JSONObject from the JSON response string */
+                JSONObject baseJsonResponse = new JSONObject(reviewJson);
+
+                /* Extract the JSONArray with the key "results" **/
+                JSONArray reviewArray = baseJsonResponse.getJSONArray("results");
+
+                /* For each movie in the movieArray, create a Movie object */
+                for (int i = 0; i < reviewArray.length(); i++) {
+
+                    /* Get a single movie at position i within the list of movies */
+                    JSONObject movieObject = reviewArray.getJSONObject(i);
+
+                    /* Extract the value for the required keys */
+                    String reviewAuthor = movieObject.getString("author");
+
+                    String reviewText = movieObject.getString("content");
+
+                    reviewUrl = movieObject.getString("url");
+
+                    currentMovie.setReviewAuthor(reviewAuthor);
+                    currentMovie.setReviewText(reviewText);
+                    currentMovie.setReviewUrl(reviewUrl);
+
+                    movies.add(0, currentMovie);
+
+                }
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Problem retrieving the movie JSON results.", e);
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, "Problem parsing the movie JSON response results", e);
+            }
+            return reviewUrl;
+        }
+
+        @Override
+        protected void onPostExecute(String reviewUrl) {
+
+            String reviewAuthor = currentMovie.getReviewAuthor();
+            String reviewText = currentMovie.getReviewText();
+
+            if (reviewUrl == null || reviewAuthor == null || reviewText == null) {
+                reviewAuthorTextView.setVisibility(View.GONE);
+                reviewTextView.setVisibility(View.GONE);
+                fullReviewButton.setVisibility(View.GONE);
+                reviewLabelTextView.setVisibility(View.GONE);
+            } else {
+                reviewAuthorTextView.setText(reviewAuthor);
+                reviewTextView.setText(reviewText);
+                reviewUrl = currentMovie.getReviewUrl();
+                final Uri reviewUri = Uri.parse(reviewUrl);
+                fullReviewButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent openFullReviewIntent = new Intent(Intent.ACTION_VIEW);
+                        openFullReviewIntent.setData(reviewUri);
+                        getApplicationContext().startActivity(openFullReviewIntent);
+                    }
+                });
+            }
+        }
+    }
+
 
     private class TrailerAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -133,7 +215,7 @@ public class DetailActivity extends AppCompatActivity {
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Problem retrieving the movie JSON results.", e);
             } catch (JSONException e) {
-                Log.e(LOG_TAG, "", e);
+                Log.e(LOG_TAG, "Problem parsing the movie JSON response results", e);
             }
             return trailerUrlPath;
         }
@@ -141,7 +223,10 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String trailerUrlPath) {
             if (trailerUrlPath == null) {
-                return;
+                playTrailerButton.setVisibility(View.GONE);
+                trailerTextView.setVisibility(View.GONE);
+                trailerLabelTextView.setVisibility(View.GONE);
+
             } else {
                 trailerUrlPath = currentMovie.getTrailerUrlPath();
                 final Uri trailerUri = Uri.parse(TRAILER_BASE_URL + trailerUrlPath);
@@ -159,17 +244,17 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-
+//
 //    @Override
 //    protected void onSaveInstanceState(Bundle outState) {
-////        outState.putInt(movie, movieId);
+//        outState.putInt(currentMovie);
 //        super.onSaveInstanceState(outState);
 //    }
 
     /**
      * Populates the UI with details of the selected movie
      */
-//    private void generateUI(Movie movie) {
+
     private void generateUI() {
 
         /* Get BaseContext and store it a Context variable */
@@ -249,7 +334,7 @@ public class DetailActivity extends AppCompatActivity {
 
             new TrailerAsyncTask().execute(String.valueOf(id), QueryUtils.TRAILER_QUERY);
 
-//            new ReviewAsyncTask().execute(String.valueOf(id), String.valueOf(QueryUtils.REVIEW_QUERY));
+            new ReviewAsyncTask().execute(String.valueOf(id), String.valueOf(QueryUtils.REVIEW_QUERY));
 
 
             addToFavoritesButton.setOnClickListener(new View.OnClickListener() {
@@ -294,3 +379,4 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 }
+
