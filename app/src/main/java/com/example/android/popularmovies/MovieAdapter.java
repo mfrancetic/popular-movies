@@ -90,7 +90,7 @@ class MovieAdapter extends ArrayAdapter<Movie> {
     }
 
 
-     void setMovies(List<Movie> movies) {
+    public void setMovies(List<Movie> movies) {
         movieEntries = movies;
         notifyDataSetChanged();
     }

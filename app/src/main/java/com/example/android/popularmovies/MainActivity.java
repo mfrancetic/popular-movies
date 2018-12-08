@@ -199,6 +199,8 @@ public class MainActivity extends AppCompatActivity
                 AppExecutors.getExecutors().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
+                        /* TODO Check why the Toast doesn't work; prepare onSaveInstanceState
+                        * and Landscape mode*/
                         if (moviesList == null) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -220,7 +222,8 @@ public class MainActivity extends AppCompatActivity
                                     /* Show the loading indicator while new date is being fetched */
                                     loadingIndicator.setVisibility(View.VISIBLE);
                                     movieAdapter.notifyDataSetChanged();
-                                    movieAdapter.setMovies(movies);
+                                    movieAdapter.addAll(movies);
+                                    loadingIndicator.setVisibility(View.GONE);
                                 }
                             });
 
