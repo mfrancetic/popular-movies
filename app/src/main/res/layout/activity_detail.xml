@@ -88,7 +88,7 @@
             style="@style/TextViewValueStyle"
             app:layout_constraintTop_toBottomOf="@id/review_label"
             tools:text="Breathtaking movie"
-            android:maxLines="3"
+            android:maxLines="4"
             />
 
         <TextView

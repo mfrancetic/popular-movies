@@ -1,6 +1,7 @@
 package com.example.android.popularmovies;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -70,11 +71,21 @@ class MovieAdapter extends ArrayAdapter<Movie> {
 
         /* Using the Picasso library load the fullPosterPathUri into the gridItemView,
          * resize and center it. */
-        com.squareup.picasso.Picasso
-                .with(context)
-                .load(fullPosterPathUri)
-                .centerInside().resize(width / 2, height / 2)
-                .into(gridItemImageView);
+
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            com.squareup.picasso.Picasso
+                    .with(context)
+                    .load(fullPosterPathUri)
+                    .centerInside().resize(width / 3, height)
+                    .into(gridItemImageView);
+        } else {
+            com.squareup.picasso.Picasso
+                    .with(context)
+                    .load(fullPosterPathUri)
+                    .centerInside().resize(width / 2, height / 2)
+                    .into(gridItemImageView);
+
+        }
 
         /* Return the gridItemView that is now showing the appropriate data */
         return convertView;

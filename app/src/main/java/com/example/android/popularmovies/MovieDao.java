@@ -22,4 +22,7 @@ public interface MovieDao {
 
     @Query("SELECT * FROM movie WHERE movieId = :movieId")
     LiveData<Movie> loadMovieById(int movieId);
+
+    @Query("SELECT COUNT (*) FROM movie")
+    int getMovieCount();
 }

@@ -75,6 +75,8 @@ public class DetailActivity extends AppCompatActivity {
 
     TextView trailerLabelTextView;
 
+    AddMovieViewModel viewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +91,9 @@ public class DetailActivity extends AppCompatActivity {
         trailerTextView = findViewById(R.id.trailer_text_view);
         trailerLabelTextView = findViewById(R.id.trailer_label);
         reviewLabelTextView = findViewById(R.id.review_label);
+
+//        viewModel = ViewModelProviders.of(this).get(AddMovieViewModel.class);
+
 
         generateUI();
     }
@@ -194,7 +199,7 @@ public class DetailActivity extends AppCompatActivity {
                 JSONObject baseJsonResponse = new JSONObject(movieString);
 
                 /* Extract the JSONArray with the key "results" **/
-                JSONArray movieTrailerArray = baseJsonResponse.getJSONArray("youtube");
+                JSONArray movieTrailerArray = baseJsonResponse.getJSONArray("results");
 
                 if (movieTrailerArray.length() == 0) {
                     trailerUrlPath = null;
@@ -207,7 +212,7 @@ public class DetailActivity extends AppCompatActivity {
 
                 /* Extract the value for the required keys */
 
-                trailerUrlPath = movieObject.getString("source");
+                trailerUrlPath = movieObject.getString("key");
 
                 currentMovie.setTrailerUrlPath(trailerUrlPath);
 
@@ -301,7 +306,7 @@ public class DetailActivity extends AppCompatActivity {
             AddMovieViewModelFactory factory = new AddMovieViewModelFactory(database, id);
             // COMPLETED (11) Declare a AddTaskViewModel variable and initialize it by calling ViewModelProviders.of
             // for that use the factory created above AddTaskViewModel
-            final AddMovieViewModel viewModel
+             viewModel
                     = ViewModelProviders.of(this, factory).get(AddMovieViewModel.class);
 
             // COMPLETED (12) Observe the LiveData object in the ViewModel. Use it also when

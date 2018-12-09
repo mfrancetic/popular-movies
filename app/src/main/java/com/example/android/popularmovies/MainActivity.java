@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import android.app.LoaderManager;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -67,19 +69,78 @@ public class MainActivity extends AppCompatActivity
      */
     private String selectedOption;
 
+    int selectedPosition;
+
+//    AddMovieViewModel addMovieViewModel;
+
+//    AddMovieViewModelFactory addMovieViewModelFactory;
+
+    Bundle savedInstanceStateBundle;
+
+    private Parcelable gridViewState = null;
+    private static final String GRID_VIEW_STATE = "gridViewState";
+
+    GridView movieGridView;
 
     private AppDatabase appDatabase;
+
+
+    private static final String SELECTED_POSITION_ID = "selectedOption";
+
+    private static final int DEFAULT_SELECTED_POSITION = -1;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//
+//        if (gridViewState != null) {
+//            movieGridView.onRestoreInstanceState(gridViewState);
+//        }
+
+//        addMovieViewModelFactory = AddMovieViewModelFactory()
+//        addMovieViewModel = ViewModelProviders.of(this).get(AddMovieViewModel.class);
+
 
         generateGridView();
         initializeLoader();
         generateSpinner();
+
+//        if (savedInstanceState != null) {
+//            selectedOption = savedInstanceState.getInt(SELECTED_POSITION_ID, DEFAULT_SELECTED_POSITION);
+//        }
     }
+//
+//    @Override
+//    protected void onPause() {
+//        gridViewState = movieGridView.onSaveInstanceState();
+//        movieGridView.setAdapter(movieAdapter);
+//        movieGridView.onRestoreInstanceState(gridViewState);
+//        super.onPause();
+//    }
+//
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        outState.putInt(SELECTED_POSITION_ID, selectedPosition);
+//        outState.putInt(SELECTED_POSITION_ID, selectedPosition);
+//        super.onSaveInstanceState(outState);
+//        gridViewState =
+//                outState.putParcelable(GRID_VIEW_STATE, gridViewState);
+//    }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+////
+//        }
+//    }
+
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
+//    }
 
     /**
      * Generate and populate the GridView
@@ -88,7 +149,7 @@ public class MainActivity extends AppCompatActivity
         /* Find a reference to the GridView in the layout, create a new adapter that takes
          * an empty list of movies an input and set the adapter on the GridView,
          * so the grid can be populated in the user interface. */
-        GridView movieGridView = findViewById(R.id.grid_view);
+        movieGridView = findViewById(R.id.grid_view);
 
         emptyTextView = findViewById(R.id.empty_text_view);
         movieGridView.setEmptyView(emptyTextView);
@@ -115,7 +176,6 @@ public class MainActivity extends AppCompatActivity
         });
 
         appDatabase = AppDatabase.getInstance(getApplicationContext());
-//        loadFavorites();
     }
 
     /**
@@ -140,7 +200,7 @@ public class MainActivity extends AppCompatActivity
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 /* Depending on the selected item, update the selectedOption value with the value
                  * of the popular or top_rated key*/
-                int selectedPosition = parent.getSelectedItemPosition();
+                selectedPosition = parent.getSelectedItemPosition();
                 if (selectedPosition == 0) {
                     selectedOption = getString(R.string.settings_sort_by_most_popular_value);
 
@@ -158,7 +218,6 @@ public class MainActivity extends AppCompatActivity
 
                 } else if (selectedPosition == 1) {
                     selectedOption = getString(R.string.settings_sort_by_top_rated_value);
-
 
 
                     /* Clear the GridView as a new query will be kicked off */
@@ -196,12 +255,12 @@ public class MainActivity extends AppCompatActivity
 
                 final LiveData<List<Movie>> moviesList = appDatabase.movieDao().loadAllFavoriteMovies();
 
+
                 AppExecutors.getExecutors().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        /* TODO Check why the Toast doesn't work; prepare onSaveInstanceState
-                        * and Landscape mode*/
-                        if (moviesList == null) {
+                        final int numberOfMovies =  appDatabase.movieDao().getMovieCount();
+                        if (numberOfMovies < 1) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

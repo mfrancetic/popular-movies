@@ -33,7 +33,7 @@ final class QueryUtils {
     /**
      * URL for the trailers from The MovieDB
      */
-     static final String TRAILER_QUERY = "trailers";
+     static final String TRAILER_QUERY = "videos";
 
     /**
      * URL for the reviews from The MovieDB
