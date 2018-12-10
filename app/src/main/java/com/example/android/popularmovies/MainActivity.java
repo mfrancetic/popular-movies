@@ -16,6 +16,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -75,9 +76,10 @@ public class MainActivity extends AppCompatActivity
 
 //    AddMovieViewModelFactory addMovieViewModelFactory;
 
-    Bundle savedInstanceStateBundle;
+    Bundle savedInstanceStateBundle = new Bundle();
 
     private Parcelable gridViewState = null;
+
     private static final String GRID_VIEW_STATE = "gridViewState";
 
     GridView movieGridView;
@@ -94,18 +96,26 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//
-//        if (gridViewState != null) {
+
+
+
+//        if (savedInstanceState != null) {
+//            selectedPosition = savedInstanceState.getInt(SELECTED_POSITION_I
 //            movieGridView.onRestoreInstanceState(gridViewState);
 //        }
+
 
 //        addMovieViewModelFactory = AddMovieViewModelFactory()
 //        addMovieViewModel = ViewModelProviders.of(this).get(AddMovieViewModel.class);
 
 
-        generateGridView();
+        generateGridView(savedInstanceState);
         initializeLoader();
         generateSpinner();
+//
+//        if (savedInstanceState != null) {
+//            onRestoreInstanceState(savedInstanceState);
+//        }
 
 //        if (savedInstanceState != null) {
 //            selectedOption = savedInstanceState.getInt(SELECTED_POSITION_ID, DEFAULT_SELECTED_POSITION);
@@ -120,32 +130,41 @@ public class MainActivity extends AppCompatActivity
 //        super.onPause();
 //    }
 //
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(GRID_VIEW_STATE, movieAdapter.getMovieList());
+//        outState.putBundle(GRID_VIEW_STATE, savedInstanceStateBundle);
+
+
+//        outState.putParcelableArrayList(GRID_VIEW_STATE,);
+
 //        outState.putInt(SELECTED_POSITION_ID, selectedPosition);
-//        outState.putInt(SELECTED_POSITION_ID, selectedPosition);
-//        super.onSaveInstanceState(outState);
-//        gridViewState =
-//                outState.putParcelable(GRID_VIEW_STATE, gridViewState);
-//    }
+//        outState.pu
+//        outState.putParcelable(GRID_VIEW_STATE, );
+//        outState = outState.putParcelable(GRID_VIEW_STATE, gridViewState);
+    }
 
 //    @Override
 //    protected void onResume() {
 //        super.onResume();
-////
 //        }
-//    }
 
+//
 //    @Override
 //    protected void onRestoreInstanceState(Bundle savedInstanceState) {
 //        super.onRestoreInstanceState(savedInstanceState);
 //        gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
+
+//        savedInstanceState
+//        MovieAdapter adapter = new MovieAdapter(this, gridViewState)
+//        movieAdapter = new Movie
 //    }
 
     /**
      * Generate and populate the GridView
      */
-    private void generateGridView() {
+    private void generateGridView(Bundle savedInstanceState) {
         /* Find a reference to the GridView in the layout, create a new adapter that takes
          * an empty list of movies an input and set the adapter on the GridView,
          * so the grid can be populated in the user interface. */
@@ -156,8 +175,15 @@ public class MainActivity extends AppCompatActivity
 
         loadingIndicator = findViewById(R.id.loading_indicator);
 
-        movieAdapter = new MovieAdapter(this, new ArrayList<Movie>());
+        if (savedInstanceState != null) {
+            ArrayList<Movie> movieList = savedInstanceState.getParcelableArrayList(GRID_VIEW_STATE);
+             movieAdapter = new MovieAdapter(this, movieList);
+        } else {
+            movieAdapter = new MovieAdapter(this, new ArrayList<Movie>());
+        }
+
         movieGridView.setAdapter(movieAdapter);
+
 
           /* Set an item click listener on the GridView, which sends an intent to the DetailActivity
          to open the details of the selected movie. */

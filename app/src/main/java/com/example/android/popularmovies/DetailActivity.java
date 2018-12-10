@@ -1,18 +1,15 @@
 package com.example.android.popularmovies;
 
-import android.app.DownloadManager;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,8 +29,6 @@ import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
 
-
-    TrailerAdapter trailerAdapter;
 
     String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
 
@@ -184,13 +179,8 @@ public class DetailActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             List<Movie> movies = new ArrayList<>();
 
-//            Movie currentMovie = new Movie();
-
             int id = currentMovie.getMovieId();
 
-//            if (TextUtils.isEmpty(strings)) {
-//                return null;
-//            }
             try {
                 URL url = QueryUtils.createReviewTrailerUrl(String.valueOf(id), QueryUtils.TRAILER_QUERY);
                 String movieString = QueryUtils.makeHttpRequest(url);
@@ -204,8 +194,7 @@ public class DetailActivity extends AppCompatActivity {
                 if (movieTrailerArray.length() == 0) {
                     trailerUrlPath = null;
                 }
-                /* For each movie in the movieArray, create a Movie object */
-//                for (int i = 0; i < movieTrailerArray.length(); i++) {
+                /* Create a Movie object for the first movie in the movieArray, */
 
                 /* Get a single movie at position i within the list of movies */
                 JSONObject movieObject = movieTrailerArray.getJSONObject(0);
@@ -249,12 +238,18 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-//
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
 //        outState.putInt(currentMovie);
-//        super.onSaveInstanceState(outState);
-//    }
+        outState.putParcelable();
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
     /**
      * Populates the UI with details of the selected movie
@@ -276,6 +271,8 @@ public class DetailActivity extends AppCompatActivity {
         /* Get the Intent and check if it is null. */
         Intent intent = getIntent();
         if (intent != null) {
+
+//            if
 
             /* If the intent exists, get the currentMovie object from the parcelableExtra */
             currentMovie = intent.getParcelableExtra("currentMovie");
@@ -302,20 +299,19 @@ public class DetailActivity extends AppCompatActivity {
             plotSynopsisTextView.setText(plotSynopsis);
 
 
-            // COMPLETED (10) Declare a AddTaskViewModelFactory using mDb and mTaskId
+            // Declared a AddTaskViewModelFactory using mDb and mTaskId
             AddMovieViewModelFactory factory = new AddMovieViewModelFactory(database, id);
-            // COMPLETED (11) Declare a AddTaskViewModel variable and initialize it by calling ViewModelProviders.of
+            // Declared a AddTaskViewModel variable and initialize it by calling ViewModelProviders.of
             // for that use the factory created above AddTaskViewModel
-             viewModel
+            viewModel
                     = ViewModelProviders.of(this, factory).get(AddMovieViewModel.class);
 
-            // COMPLETED (12) Observe the LiveData object in the ViewModel. Use it also when
+            // Observe the LiveData object in the ViewModel. Use it also when
             // removing the observer
             viewModel.getMovie().observe(this, new Observer<Movie>() {
                 @Override
                 public void onChanged(@Nullable Movie movieInDatabase) {
                     viewModel.getMovie().removeObserver(this);
-
                     if (movieInDatabase != null) {
                         isFavorite = true;
                         addToFavoritesButton.setImageResource(R.drawable.ic_star_rate);
@@ -379,9 +375,10 @@ public class DetailActivity extends AppCompatActivity {
 
                                                     }
 
+
+
             );
 
         }
     }
 }
-

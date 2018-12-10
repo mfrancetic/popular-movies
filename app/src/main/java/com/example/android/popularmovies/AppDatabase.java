@@ -14,7 +14,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "favoriteMovies";
     private static AppDatabase databaseInstance;
 
-    public static AppDatabase getInstance(Context context) {
+     static AppDatabase getInstance(Context context) {
         if (databaseInstance== null) {
             synchronized (MOVIE) {
                 Log.d(LOG_TAG, "Creating a new database instance");

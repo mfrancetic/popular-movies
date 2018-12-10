@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 import android.os.Handler;
 
 
-// check if I need it!!
 public class AppExecutors {
 
     private static final Object MOVIE = new Object();
@@ -23,7 +22,7 @@ public class AppExecutors {
         this.networkIO = networkIO;
     }
 
-    public static AppExecutors getExecutors() {
+     static AppExecutors getExecutors() {
         if (executors == null) {
             synchronized (MOVIE) {
                 executors = new AppExecutors(Executors.newSingleThreadExecutor(),
