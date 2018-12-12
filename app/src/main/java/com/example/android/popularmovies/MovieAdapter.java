@@ -30,7 +30,7 @@ class MovieAdapter extends ArrayAdapter<Movie> {
      */
     private static final String posterSize = "w185";
 
-//    private List<Movie> movieEntries;
+    private List<Movie> movieEntries;
 
     /**
      * Constructs a new MovieAdapter.
@@ -85,7 +85,6 @@ class MovieAdapter extends ArrayAdapter<Movie> {
                     .load(fullPosterPathUri)
                     .centerInside().resize(width / 2, height / 2)
                     .into(gridItemImageView);
-
         }
 
         /* Return the gridItemView that is now showing the appropriate data */
@@ -101,14 +100,12 @@ class MovieAdapter extends ArrayAdapter<Movie> {
         return Uri.parse(fullPosterPath);
     }
 
-//
-//    public void setMovies(List<Movie> movies) {
-//        movieEntries = movies;
-//        notifyDataSetChanged();
-//    }
-
-    public ArrayList<Movie> getMovieList() {
-        return new ArrayList<>();
+    public void setMovies(List<Movie> movies) {
+        movieEntries = movies;
+        notifyDataSetChanged();
     }
 
+    public ArrayList<Movie> getMovies() {
+        return new ArrayList<>();
+    }
 }

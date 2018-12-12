@@ -21,7 +21,7 @@ public class MainViewModel extends AndroidViewModel {
         movies = database.movieDao().loadAllFavoriteMovies();
     }
 
-    public LiveData<List<Movie>> getMovies() {
+    LiveData<List<Movie>> getMovies() {
         return movies;
     }
 }

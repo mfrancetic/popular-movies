@@ -32,23 +32,9 @@ public class DetailActivity extends AppCompatActivity {
 
     String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
 
-
     Movie currentMovie;
 
-    // Extra for the movie ID to be received in the intent
-//    public static final String EXTRA_MOVIE_ID = "extraMovieId";
-
-    // Extra for the movie ID to be received after rotation
-//    public static final String INSTANCE_MOVIE_ID = "instanceTaskId";
-
-    // Constant for default task id to be used when not in update mode
-//    private static final int DEFAULT_MOVIE_ID = -1;
-
-//    private int movieId = DEFAULT_MOVIE_ID;
-
     AppDatabase database;
-
-//    List<Movie> movies;
 
     private static final String LOG_TAG = DetailActivity.class.getSimpleName();
 
@@ -87,10 +73,24 @@ public class DetailActivity extends AppCompatActivity {
         trailerLabelTextView = findViewById(R.id.trailer_label);
         reviewLabelTextView = findViewById(R.id.review_label);
 
-//        viewModel = ViewModelProviders.of(this).get(AddMovieViewModel.class);
-
-
+        if (savedInstanceState == null || !savedInstanceState.containsKey("currentMovie")) {
+            currentMovie = getIntent().getParcelableExtra("currentMovie");
+        } else {
+            currentMovie = savedInstanceState.getParcelable("currentMovie");
+        }
         generateUI();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putParcelable("currentMovie", currentMovie);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.getParcelable("currentMovie");
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private class ReviewAsyncTask extends AsyncTask<String, Void, String> {
@@ -101,7 +101,6 @@ public class DetailActivity extends AppCompatActivity {
             List<Movie> movies = new ArrayList<>();
 
             String reviewUrl = null;
-
             int id = currentMovie.getMovieId();
 
             try {
@@ -132,7 +131,6 @@ public class DetailActivity extends AppCompatActivity {
                     currentMovie.setReviewUrl(reviewUrl);
 
                     movies.add(0, currentMovie);
-
                 }
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Problem retrieving the movie JSON results.", e);
@@ -170,7 +168,6 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-
     private class TrailerAsyncTask extends AsyncTask<String, Void, String> {
 
         String trailerUrlPath = null;
@@ -180,7 +177,6 @@ public class DetailActivity extends AppCompatActivity {
             List<Movie> movies = new ArrayList<>();
 
             int id = currentMovie.getMovieId();
-
             try {
                 URL url = QueryUtils.createReviewTrailerUrl(String.valueOf(id), QueryUtils.TRAILER_QUERY);
                 String movieString = QueryUtils.makeHttpRequest(url);
@@ -188,19 +184,16 @@ public class DetailActivity extends AppCompatActivity {
                 /* Create a JSONObject from the JSON response string */
                 JSONObject baseJsonResponse = new JSONObject(movieString);
 
-                /* Extract the JSONArray with the key "results" **/
+                /* Extract the JSONArray with the key "results" */
                 JSONArray movieTrailerArray = baseJsonResponse.getJSONArray("results");
 
                 if (movieTrailerArray.length() == 0) {
                     trailerUrlPath = null;
                 }
                 /* Create a Movie object for the first movie in the movieArray, */
-
-                /* Get a single movie at position i within the list of movies */
                 JSONObject movieObject = movieTrailerArray.getJSONObject(0);
 
                 /* Extract the value for the required keys */
-
                 trailerUrlPath = movieObject.getString("key");
 
                 currentMovie.setTrailerUrlPath(trailerUrlPath);
@@ -220,41 +213,24 @@ public class DetailActivity extends AppCompatActivity {
                 playTrailerButton.setVisibility(View.GONE);
                 trailerTextView.setVisibility(View.GONE);
                 trailerLabelTextView.setVisibility(View.GONE);
-
             } else {
                 trailerUrlPath = currentMovie.getTrailerUrlPath();
                 final Uri trailerUri = Uri.parse(TRAILER_BASE_URL + trailerUrlPath);
                 playTrailerButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        /* COMPLETED ACTION_VIEW */
                         Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
                         playTrailerIntent.setData(trailerUri);
                         getApplicationContext().startActivity(playTrailerIntent);
                     }
                 });
-
             }
         }
-    }
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-//        outState.putInt(currentMovie);
-        outState.putParcelable();
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     /**
      * Populates the UI with details of the selected movie
      */
-
     private void generateUI() {
 
         /* Get BaseContext and store it a Context variable */
@@ -270,12 +246,8 @@ public class DetailActivity extends AppCompatActivity {
 
         /* Get the Intent and check if it is null. */
         Intent intent = getIntent();
+        /* If the intent exists, get the currentMovie object from the parcelableExtra */
         if (intent != null) {
-
-//            if
-
-            /* If the intent exists, get the currentMovie object from the parcelableExtra */
-            currentMovie = intent.getParcelableExtra("currentMovie");
 
             /* Get the id of the current movie */
             final int id = currentMovie.getMovieId();
@@ -298,7 +270,6 @@ public class DetailActivity extends AppCompatActivity {
             final String plotSynopsis = currentMovie.getMoviePlotSynopsis();
             plotSynopsisTextView.setText(plotSynopsis);
 
-
             // Declared a AddTaskViewModelFactory using mDb and mTaskId
             AddMovieViewModelFactory factory = new AddMovieViewModelFactory(database, id);
             // Declared a AddTaskViewModel variable and initialize it by calling ViewModelProviders.of
@@ -319,7 +290,6 @@ public class DetailActivity extends AppCompatActivity {
                         isFavorite = false;
                         addToFavoritesButton.setImageResource(R.drawable.ic_star_empty);
                     }
-
                 }
             });
 
@@ -336,7 +306,6 @@ public class DetailActivity extends AppCompatActivity {
             new TrailerAsyncTask().execute(String.valueOf(id), QueryUtils.TRAILER_QUERY);
 
             new ReviewAsyncTask().execute(String.valueOf(id), String.valueOf(QueryUtils.REVIEW_QUERY));
-
 
             addToFavoritesButton.setOnClickListener(new View.OnClickListener() {
                                                         @Override
@@ -366,19 +335,13 @@ public class DetailActivity extends AppCompatActivity {
                                                                             }
                                                                         }
                                                                     });
-
                                                                 }
                                                             });
-
                                                         }
 
 
                                                     }
-
-
-
             );
-
         }
     }
 }

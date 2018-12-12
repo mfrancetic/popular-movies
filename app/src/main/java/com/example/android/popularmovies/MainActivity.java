@@ -3,8 +3,6 @@ package com.example.android.popularmovies;
 import android.app.LoaderManager;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
@@ -16,7 +14,6 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -72,13 +69,7 @@ public class MainActivity extends AppCompatActivity
 
     int selectedPosition;
 
-//    AddMovieViewModel addMovieViewModel;
-
-//    AddMovieViewModelFactory addMovieViewModelFactory;
-
-    Bundle savedInstanceStateBundle = new Bundle();
-
-    private Parcelable gridViewState = null;
+    private Parcelable gridViewState;
 
     private static final String GRID_VIEW_STATE = "gridViewState";
 
@@ -86,85 +77,47 @@ public class MainActivity extends AppCompatActivity
 
     private AppDatabase appDatabase;
 
-
-    private static final String SELECTED_POSITION_ID = "selectedOption";
-
-    private static final int DEFAULT_SELECTED_POSITION = -1;
-
+    public static List<Movie> movieList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState == null || !savedInstanceState.containsKey("movieList")) {
+            movieList = new ArrayList<>();
 
+        } else {
+            movieList = savedInstanceState.getParcelableArrayList("movieList");
+            gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
+        }
 
-//        if (savedInstanceState != null) {
-//            selectedPosition = savedInstanceState.getInt(SELECTED_POSITION_I
-//            movieGridView.onRestoreInstanceState(gridViewState);
-//        }
-
-
-//        addMovieViewModelFactory = AddMovieViewModelFactory()
-//        addMovieViewModel = ViewModelProviders.of(this).get(AddMovieViewModel.class);
-
-
-        generateGridView(savedInstanceState);
         initializeLoader();
         generateSpinner();
-//
-//        if (savedInstanceState != null) {
-//            onRestoreInstanceState(savedInstanceState);
-//        }
-
-//        if (savedInstanceState != null) {
-//            selectedOption = savedInstanceState.getInt(SELECTED_POSITION_ID, DEFAULT_SELECTED_POSITION);
-//        }
+        generateGridView();
     }
-//
-//    @Override
-//    protected void onPause() {
-//        gridViewState = movieGridView.onSaveInstanceState();
-//        movieGridView.setAdapter(movieAdapter);
-//        movieGridView.onRestoreInstanceState(gridViewState);
-//        super.onPause();
-//    }
-//
+
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(GRID_VIEW_STATE, movieAdapter.getMovieList());
-//        outState.putBundle(GRID_VIEW_STATE, savedInstanceStateBundle);
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
 
+        gridViewState = movieGridView.onSaveInstanceState();
+        savedInstanceState.putParcelable(GRID_VIEW_STATE, gridViewState);
 
-//        outState.putParcelableArrayList(GRID_VIEW_STATE,);
-
-//        outState.putInt(SELECTED_POSITION_ID, selectedPosition);
-//        outState.pu
-//        outState.putParcelable(GRID_VIEW_STATE, );
-//        outState = outState.putParcelable(GRID_VIEW_STATE, gridViewState);
+        savedInstanceState.putParcelableArrayList("movieList", (ArrayList<? extends Parcelable>) movieList);
+        super.onSaveInstanceState(savedInstanceState);
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        }
-
-//
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
-
-//        savedInstanceState
-//        MovieAdapter adapter = new MovieAdapter(this, gridViewState)
-//        movieAdapter = new Movie
-//    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.getParcelableArrayList("movieList");
+        gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
     /**
      * Generate and populate the GridView
      */
-    private void generateGridView(Bundle savedInstanceState) {
+    private void generateGridView() {
         /* Find a reference to the GridView in the layout, create a new adapter that takes
          * an empty list of movies an input and set the adapter on the GridView,
          * so the grid can be populated in the user interface. */
@@ -175,15 +128,11 @@ public class MainActivity extends AppCompatActivity
 
         loadingIndicator = findViewById(R.id.loading_indicator);
 
-        if (savedInstanceState != null) {
-            ArrayList<Movie> movieList = savedInstanceState.getParcelableArrayList(GRID_VIEW_STATE);
-             movieAdapter = new MovieAdapter(this, movieList);
-        } else {
-            movieAdapter = new MovieAdapter(this, new ArrayList<Movie>());
-        }
-
+        movieAdapter = new MovieAdapter(this, movieList);
         movieGridView.setAdapter(movieAdapter);
-
+        if (gridViewState != null) {
+            movieGridView.onRestoreInstanceState(gridViewState);
+        }
 
           /* Set an item click listener on the GridView, which sends an intent to the DetailActivity
          to open the details of the selected movie. */
@@ -245,7 +194,6 @@ public class MainActivity extends AppCompatActivity
                 } else if (selectedPosition == 1) {
                     selectedOption = getString(R.string.settings_sort_by_top_rated_value);
 
-
                     /* Clear the GridView as a new query will be kicked off */
                     movieAdapter.clear();
 
@@ -261,7 +209,6 @@ public class MainActivity extends AppCompatActivity
                 } else if (selectedPosition == 2) {
                     loadFavorites();
                 }
-
             }
 
             @Override
@@ -270,7 +217,6 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-
     void loadFavorites() {
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
@@ -278,14 +224,12 @@ public class MainActivity extends AppCompatActivity
             public void onChanged(@Nullable final List<Movie> movies) {
                 Log.d(LOG_TAG, "Updating list of tasks from LiveData in ViewModel");
 
-
                 final LiveData<List<Movie>> moviesList = appDatabase.movieDao().loadAllFavoriteMovies();
-
 
                 AppExecutors.getExecutors().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
-                        final int numberOfMovies =  appDatabase.movieDao().getMovieCount();
+                        final int numberOfMovies = appDatabase.movieDao().getMovieCount();
                         if (numberOfMovies < 1) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -311,15 +255,12 @@ public class MainActivity extends AppCompatActivity
                                     loadingIndicator.setVisibility(View.GONE);
                                 }
                             });
-
                         }
-
                     }
                 });
             }
         });
     }
-
 
     /**
      * Initialize the loader
@@ -360,7 +301,6 @@ public class MainActivity extends AppCompatActivity
         /* API key parameter that will be appended to the URL */
         String API_PARAM = "api_key";
 
-        /* Uri.parse breaks apart the URI string that's passed into its parameter */
         Uri baseUri = Uri.parse(MOVIES_BASE_URL);
 
         /* buildUpon prepares the baseUri that we just parsed so we can add query parameters to it */

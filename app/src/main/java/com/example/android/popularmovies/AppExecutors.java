@@ -5,10 +5,9 @@ import android.support.annotation.NonNull;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
 import android.os.Handler;
-
-
-public class AppExecutors {
+ class AppExecutors {
 
     private static final Object MOVIE = new Object();
     private static AppExecutors executors;
@@ -22,7 +21,7 @@ public class AppExecutors {
         this.networkIO = networkIO;
     }
 
-     static AppExecutors getExecutors() {
+    static AppExecutors getExecutors() {
         if (executors == null) {
             synchronized (MOVIE) {
                 executors = new AppExecutors(Executors.newSingleThreadExecutor(),
@@ -33,7 +32,7 @@ public class AppExecutors {
         return executors;
     }
 
-    public Executor diskIO() {
+    Executor diskIO() {
         return diskIO;
     }
 

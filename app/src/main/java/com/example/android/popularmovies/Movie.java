@@ -12,67 +12,59 @@ import android.os.Parcelable;
 @Entity(tableName = "movie")
 public class Movie implements Parcelable {
 
-
-
-    /** Database generated ID of the movie */
-//    private int id;
-
-
     /**
      * ID of the movie
      */
     @PrimaryKey
-    private  int movieId;
+    private int movieId;
 
     /**
      * Title of the movie
      */
-    private  String movieTitle;
+    private String movieTitle;
 
     /**
      * Release date of the movie
      */
-    private  String movieReleaseDate;
+    private String movieReleaseDate;
 
     /**
      * URL of the movie poster
      */
-    private  String movieUrlPoster;
+    private String movieUrlPoster;
 
     /**
      * User rating of the movie
      */
-    private  String movieUserRating;
+    private String movieUserRating;
 
     /**
      * Plot synopsis of the movie
      */
-    private  String moviePlotSynopsis;
+    private String moviePlotSynopsis;
 
-    private  String trailerUrlPath;
+    private String trailerUrlPath;
 
-    private  String reviewAuthor;
+    private String reviewAuthor;
 
-    private  String reviewText;
+    private String reviewText;
 
-    private  String reviewUrl;
+    private String reviewUrl;
 
 
     /**
      * Constructs a new Movie object.
-     *
      * @param movieId           is the ID of the movie
      * @param movieTitle        is the title of the movie
      * @param movieReleaseDate  is the release date of the movie
      * @param movieUrlPoster    is the url of the movie poster
      * @param movieUserRating   is the user rating of the movie
      * @param moviePlotSynopsis is the plot synopsis of the movie
-     * @param trailerUrlPath
-     * @param reviewAuthor
-     * @param reviewText
-     * @param reviewUrl
+     * @param trailerUrlPath is the trailer URL path of the movie
+     * @param reviewAuthor is the author of the movie review
+     * @param reviewText is the text of the movie review
+     * @param reviewUrl is the URL of the movie review
      */
-
     Movie(int movieId, String movieTitle, String movieReleaseDate, String movieUrlPoster,
           String movieUserRating, String moviePlotSynopsis, String trailerUrlPath,
           String reviewAuthor, String reviewText, String reviewUrl) {
@@ -92,12 +84,6 @@ public class Movie implements Parcelable {
     Movie() {
     }
 
-//    Movie(int id, int movieId, String movieTitle) {
-//        this.id = id;
-//        this.movieId = movieId;
-//        this.movieTitle = movieTitle;
-//    }
-
     private Movie(Parcel in) {
         movieId = in.readInt();
         movieTitle = in.readString();
@@ -109,8 +95,6 @@ public class Movie implements Parcelable {
         reviewAuthor = in.readString();
         reviewText = in.readString();
         reviewUrl = in.readString();
-
-
     }
 
     @Override
@@ -121,7 +105,7 @@ public class Movie implements Parcelable {
     /**
      * Returns the title of the movie
      */
-     String getMovieTitle() {
+    String getMovieTitle() {
         return movieTitle;
     }
 
@@ -153,13 +137,6 @@ public class Movie implements Parcelable {
         return moviePlotSynopsis;
     }
 
-//    /**
-//     * Returns the databse ID of the movie
-//     */
-//    int getId() {
-//        return id;
-//    }
-
     /**
      * Returns the ID of the movie
      */
@@ -183,7 +160,7 @@ public class Movie implements Parcelable {
         return reviewUrl;
     }
 
-     void setTrailerUrlPath(String trailerUrlPath) {
+    void setTrailerUrlPath(String trailerUrlPath) {
         this.trailerUrlPath = trailerUrlPath;
     }
 
@@ -203,7 +180,7 @@ public class Movie implements Parcelable {
         this.movieUrlPoster = movieUrlPoster;
     }
 
-    void setMovieUserRating(String  movieUserRating) {
+    void setMovieUserRating(String movieUserRating) {
         this.movieUserRating = movieUserRating;
     }
 

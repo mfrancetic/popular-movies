@@ -15,6 +15,8 @@ class MovieLoader extends AsyncTaskLoader<List<Movie>> {
      */
     private final String urlAddress;
 
+    private List<Movie> movieData;
+
     /**
      * Constructs a new MovieLoader.
      *
@@ -28,7 +30,21 @@ class MovieLoader extends AsyncTaskLoader<List<Movie>> {
 
     @Override
     protected void onStartLoading() {
-        forceLoad();
+        super.onStartLoading();
+
+        movieData = MainActivity.movieList;
+
+        if (movieData.size() != 0) {
+            deliverResult(movieData);
+        } else {
+            forceLoad();
+        }
+    }
+
+    @Override
+    public void deliverResult(List<Movie> data) {
+        movieData = data;
+        super.deliverResult(data);
     }
 
     /**
@@ -40,7 +56,11 @@ class MovieLoader extends AsyncTaskLoader<List<Movie>> {
             return null;
         }
 
-        /* Perform a network request, parse the response and extract a list of movies*/
-        return QueryUtils.fetchMovieData(urlAddress);
+        if (movieData.size() != 0) {
+            return movieData;
+        } else {
+            /* Perform a network request, parse the response and extract a list of movies*/
+            return QueryUtils.fetchMovieData(urlAddress);
+        }
     }
 }

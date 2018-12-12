@@ -86,16 +86,15 @@
         <TextView
             android:id="@+id/review_text_view"
             style="@style/TextViewValueStyle"
-            app:layout_constraintTop_toBottomOf="@id/review_label"
-            tools:text="Breathtaking movie"
             android:maxLines="4"
-            />
+            app:layout_constraintTop_toBottomOf="@id/review_label"
+            tools:text="Breathtaking movie" />
 
         <TextView
             android:id="@+id/review_author_text_view"
             style="@style/TextViewValueStyle"
-            app:layout_constraintTop_toBottomOf="@id/review_text_view"
             android:textStyle="italic"
+            app:layout_constraintTop_toBottomOf="@id/review_text_view"
             tools:text="Author" />
 
         <Button
@@ -103,8 +102,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/review_button"
-            app:layout_constraintTop_toBottomOf="@id/review_author_text_view"
-            />
+            app:layout_constraintTop_toBottomOf="@id/review_author_text_view" />
 
         <TextView
             android:id="@+id/trailer_label"
@@ -128,7 +126,5 @@
             app:layout_constraintBottom_toBottomOf="@id/play_trailer_button"
             app:layout_constraintStart_toEndOf="@id/play_trailer_button"
             app:layout_constraintTop_toTopOf="@id/play_trailer_button" />
-
-
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
