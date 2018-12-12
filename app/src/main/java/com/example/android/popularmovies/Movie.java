@@ -43,27 +43,39 @@ public class Movie implements Parcelable {
      */
     private String moviePlotSynopsis;
 
+    /**
+     * Trailer URL path of the movie
+     */
     private String trailerUrlPath;
 
+    /**
+     * Author of the movie review
+     */
     private String reviewAuthor;
 
+    /**
+     * Text of the movie review
+     */
     private String reviewText;
 
+    /**
+     * URL of the movie review
+     */
     private String reviewUrl;
-
 
     /**
      * Constructs a new Movie object.
+     *
      * @param movieId           is the ID of the movie
      * @param movieTitle        is the title of the movie
      * @param movieReleaseDate  is the release date of the movie
      * @param movieUrlPoster    is the url of the movie poster
      * @param movieUserRating   is the user rating of the movie
      * @param moviePlotSynopsis is the plot synopsis of the movie
-     * @param trailerUrlPath is the trailer URL path of the movie
-     * @param reviewAuthor is the author of the movie review
-     * @param reviewText is the text of the movie review
-     * @param reviewUrl is the URL of the movie review
+     * @param trailerUrlPath    is the trailer URL path of the movie
+     * @param reviewAuthor      is the author of the movie review
+     * @param reviewText        is the text of the movie review
+     * @param reviewUrl         is the URL of the movie review
      */
     Movie(int movieId, String movieTitle, String movieReleaseDate, String movieUrlPoster,
           String movieUserRating, String moviePlotSynopsis, String trailerUrlPath,
@@ -144,66 +156,106 @@ public class Movie implements Parcelable {
         return movieId;
     }
 
+    /**
+     * Returns the trailer URL path of the movie
+     */
     String getTrailerUrlPath() {
         return trailerUrlPath;
     }
 
+    /**
+     * Returns the author of the movie review
+     */
     String getReviewAuthor() {
         return reviewAuthor;
     }
 
+    /**
+     * Returns the text of the movie review
+     */
     String getReviewText() {
         return reviewText;
     }
 
+    /**
+     * Returns the URL of the movie review
+     */
     String getReviewUrl() {
         return reviewUrl;
     }
 
+    /**
+     * Sets the URL of the movie trailer
+     */
     void setTrailerUrlPath(String trailerUrlPath) {
         this.trailerUrlPath = trailerUrlPath;
     }
 
+    /**
+     * Sets the ID of the movie
+     */
     void setMovieId(int movieId) {
         this.movieId = movieId;
     }
 
+    /**
+     * Sets the title of the movie
+     */
     void setMovieTitle(String movieTitle) {
         this.movieTitle = movieTitle;
     }
 
+    /**
+     * Sets the release date of the movie
+     */
     void setMovieReleaseDate(String movieReleaseDate) {
         this.movieReleaseDate = movieReleaseDate;
     }
 
+    /**
+     * Sets the URL poster of the movie
+     */
     void setMovieUrlPoster(String movieUrlPoster) {
         this.movieUrlPoster = movieUrlPoster;
     }
 
+    /**
+     * Sets the user rating of the movie
+     */
     void setMovieUserRating(String movieUserRating) {
         this.movieUserRating = movieUserRating;
     }
 
+    /**
+     * Sets the plot synopsis of the movie
+     */
     void setMoviePlotSynopsis(String moviePlotSynopsis) {
         this.moviePlotSynopsis = moviePlotSynopsis;
     }
 
+    /**
+     * Sets the author of the movie review
+     */
     void setReviewAuthor(String reviewAuthor) {
         this.reviewAuthor = reviewAuthor;
     }
 
+    /**
+     * Sets the text of the movie review
+     */
     void setReviewText(String reviewText) {
         this.reviewText = reviewText;
     }
 
+    /**
+     * Sets the URL of the movie review
+     */
     void setReviewUrl(String reviewUrl) {
         this.reviewUrl = reviewUrl;
     }
 
-
     /**
-     * Writes the movie title, release date, url of the movie poster, user rating
-     * and plot synopsis to the parcel
+     * Writes all the movie parameters to the parcel
      */
     @Override
     public void writeToParcel(Parcel parcel, int i) {

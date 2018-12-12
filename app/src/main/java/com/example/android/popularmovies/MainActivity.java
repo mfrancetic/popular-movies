@@ -1,7 +1,6 @@
 package com.example.android.popularmovies;
 
 import android.app.LoaderManager;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Generated value of the API key
      */
-    public static final String apiKey = "";
+    public static final String apiKey = "cf57b652542b1bf6395086b6ae46c100";
 
     /**
      * Constant value for the movie loader ID
@@ -67,16 +66,34 @@ public class MainActivity extends AppCompatActivity
      */
     private String selectedOption;
 
+    /**
+     * SelectedPosition integer
+     */
     int selectedPosition;
 
+    /**
+     * Parcelable gridViewState, which will be stored to the onSaveInstanceState
+     */
     private Parcelable gridViewState;
 
+    /**
+     * Key of the gridViewState
+     */
     private static final String GRID_VIEW_STATE = "gridViewState";
 
+    /**
+     * movieGridView GridView object
+     */
     GridView movieGridView;
 
+    /**
+     * database AppDatabase object
+     */
     private AppDatabase appDatabase;
 
+    /**
+     * movieList List<Movie> object
+     */
     public static List<Movie> movieList;
 
     @Override
@@ -84,9 +101,11 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* Check if the savedInstanceState exists, and contains the key "movieList".
+         * If so, get the parcelableArrayList under that key value from the savedInstanceState,
+         * if not, get the parcelable from the intent. */
         if (savedInstanceState == null || !savedInstanceState.containsKey("movieList")) {
             movieList = new ArrayList<>();
-
         } else {
             movieList = savedInstanceState.getParcelableArrayList("movieList");
             gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
@@ -97,16 +116,22 @@ public class MainActivity extends AppCompatActivity
         generateGridView();
     }
 
+    /**
+     * Store the gridViewState object under the key GRID_VIEW_STATE, as well as the
+     * ParcelableArrayList under the key "movieList" to the savedInstanceState bundle
+     */
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
-
         gridViewState = movieGridView.onSaveInstanceState();
         savedInstanceState.putParcelable(GRID_VIEW_STATE, gridViewState);
-
         savedInstanceState.putParcelableArrayList("movieList", (ArrayList<? extends Parcelable>) movieList);
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    /**
+     * Restore the gridViewState object under the key GRID_VIEW_STATE, as well as the
+     * ParcelableArrayList under the key "movieList" from the savedInstanceState bundle
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         savedInstanceState.getParcelableArrayList("movieList");
@@ -122,14 +147,14 @@ public class MainActivity extends AppCompatActivity
          * an empty list of movies an input and set the adapter on the GridView,
          * so the grid can be populated in the user interface. */
         movieGridView = findViewById(R.id.grid_view);
-
         emptyTextView = findViewById(R.id.empty_text_view);
         movieGridView.setEmptyView(emptyTextView);
-
         loadingIndicator = findViewById(R.id.loading_indicator);
 
         movieAdapter = new MovieAdapter(this, movieList);
         movieGridView.setAdapter(movieAdapter);
+        /* If the gridViewState is not equal null, use the onRestoreInstanceState method to
+         * get the value */
         if (gridViewState != null) {
             movieGridView.onRestoreInstanceState(gridViewState);
         }
@@ -149,7 +174,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-
+        /* Get the instance of the AppDatabase using the ApplicationContext */
         appDatabase = AppDatabase.getInstance(getApplicationContext());
     }
 
@@ -174,7 +199,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 /* Depending on the selected item, update the selectedOption value with the value
-                 * of the popular or top_rated key*/
+                 * of the popular or top_rated key, or load the Favorites from the database */
                 selectedPosition = parent.getSelectedItemPosition();
                 if (selectedPosition == 0) {
                     selectedOption = getString(R.string.settings_sort_by_most_popular_value);
@@ -190,7 +215,6 @@ public class MainActivity extends AppCompatActivity
 
                     /* Restart the loader to query again The MovieDB as the query settings have been updated */
                     getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
-
                 } else if (selectedPosition == 1) {
                     selectedOption = getString(R.string.settings_sort_by_top_rated_value);
 
@@ -205,8 +229,9 @@ public class MainActivity extends AppCompatActivity
 
                     /* Restart the loader to query again The MovieDB as the query settings have been updated */
                     getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
-
                 } else if (selectedPosition == 2) {
+                    /* if the selectedPosition is 2, call the method loadFavorites to load all the
+                     * favorite movies from the local database */
                     loadFavorites();
                 }
             }
@@ -217,6 +242,9 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    /**
+     * Load the favorite movies saved in the local database, using the ViewModel and Observer
+     */
     void loadFavorites() {
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
@@ -224,12 +252,16 @@ public class MainActivity extends AppCompatActivity
             public void onChanged(@Nullable final List<Movie> movies) {
                 Log.d(LOG_TAG, "Updating list of tasks from LiveData in ViewModel");
 
-                final LiveData<List<Movie>> moviesList = appDatabase.movieDao().loadAllFavoriteMovies();
+                /* Load all favorite movies from the database */
+                appDatabase.movieDao().loadAllFavoriteMovies();
 
+                /* Get the AppExecutors and check if there are movies saved in the Favorites */
                 AppExecutors.getExecutors().diskIO().execute(new Runnable() {
                     @Override
                     public void run() {
                         final int numberOfMovies = appDatabase.movieDao().getMovieCount();
+                        /* In case the numberOfMovies is smaller than 1, inform the user that there
+                         * are no movies in the Favorites list */
                         if (numberOfMovies < 1) {
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -239,6 +271,8 @@ public class MainActivity extends AppCompatActivity
                                 }
                             });
                         } else {
+                            /* If there are movies in the Favorites list, populate the UI with their
+                            movie posters */
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -248,7 +282,10 @@ public class MainActivity extends AppCompatActivity
                                     /* Hide the empty state text view as the loading indicator will be displayed */
                                     emptyTextView.setVisibility(View.GONE);
 
-                                    /* Show the loading indicator while new date is being fetched */
+                                    /* Show the loading indicator while new date is being fetched,
+                                    notify the movieAdapter that the DataSet has been change, and
+                                    after adding all the movies to the adapter, hide the loading
+                                    indicator */
                                     loadingIndicator.setVisibility(View.VISIBLE);
                                     movieAdapter.notifyDataSetChanged();
                                     movieAdapter.addAll(movies);

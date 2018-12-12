@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,8 +27,6 @@ class MovieAdapter extends ArrayAdapter<Movie> {
      * Size of the movie poster
      */
     private static final String posterSize = "w185";
-
-    private List<Movie> movieEntries;
 
     /**
      * Constructs a new MovieAdapter.
@@ -98,14 +94,5 @@ class MovieAdapter extends ArrayAdapter<Movie> {
         String posterPath = selectedMovie.getMovieUrlPoster();
         String fullPosterPath = BASE_POSTER_URL + posterSize + posterPath;
         return Uri.parse(fullPosterPath);
-    }
-
-    public void setMovies(List<Movie> movies) {
-        movieEntries = movies;
-        notifyDataSetChanged();
-    }
-
-    public ArrayList<Movie> getMovies() {
-        return new ArrayList<>();
     }
 }

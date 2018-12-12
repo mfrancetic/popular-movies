@@ -82,6 +82,9 @@ final class QueryUtils {
         return url;
     }
 
+    /**
+     * Create a URL for the reviews and trailers
+     */
     static URL createReviewTrailerUrl(String movieId, String query) {
         /* API key parameter that will be appended to the URL */
         String API_PARAM = "api_key";
@@ -200,20 +203,27 @@ final class QueryUtils {
             for (int i = 0; i < movieArray.length(); i++) {
 
                 /* Get a single movie at position i within the list of movies */
-                JSONObject currentMovie = movieArray.getJSONObject(i);
+                JSONObject currentMovieObject = movieArray.getJSONObject(i);
 
                 /* Extract the value for the required keys */
-                String title = currentMovie.getString("title");
-                String releaseDate = currentMovie.getString("release_date");
-                String posterUrl = currentMovie.getString("poster_path");
-                String userRating = currentMovie.getString("vote_average");
-                String plotSynopsis = currentMovie.getString("overview");
-                int id = currentMovie.getInt("id");
+                String title = currentMovieObject.getString("title");
+                String releaseDate = currentMovieObject.getString("release_date");
+                String posterUrl = currentMovieObject.getString("poster_path");
+                String userRating = currentMovieObject.getString("vote_average");
+                String plotSynopsis = currentMovieObject.getString("overview");
+                int id = currentMovieObject.getInt("id");
 
                 /* Create a new Movie object with the title, releaseDate, posterUrl, userRating,
                plotSynopsis and ID from the JSON response. */
                 Movie movie = new Movie(id, title, releaseDate, posterUrl, userRating, plotSynopsis,
                         null, null, null, null);
+
+                movie.setMovieId(id);
+                movie.setMovieTitle(title);
+                movie.setMovieReleaseDate(releaseDate);
+                movie.setMovieUrlPoster(posterUrl);
+                movie.setMovieUserRating(userRating);
+                movie.setMoviePlotSynopsis(plotSynopsis);
 
                 /* Add the new movie to the list of movies. */
                 movies.add(movie);

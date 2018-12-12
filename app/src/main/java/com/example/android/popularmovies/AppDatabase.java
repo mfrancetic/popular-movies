@@ -14,6 +14,8 @@ public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "favoriteMovies";
     private static AppDatabase databaseInstance;
 
+    /* Gets the instance of the AppDatabase and builds the database using the
+    * Room.databaseBuilder method */
      static AppDatabase getInstance(Context context) {
         if (databaseInstance== null) {
             synchronized (MOVIE) {

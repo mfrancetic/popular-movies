@@ -7,9 +7,15 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import android.os.Handler;
- class AppExecutors {
 
-    private static final Object MOVIE = new Object();
+
+/**
+ * Global executor pools for the whole application.
+ */
+class AppExecutors {
+
+    /* Singleton instantiation */
+    private static final Object LOCK = new Object();
     private static AppExecutors executors;
     private final Executor diskIO;
     private final Executor mainThread;
@@ -23,7 +29,7 @@ import android.os.Handler;
 
     static AppExecutors getExecutors() {
         if (executors == null) {
-            synchronized (MOVIE) {
+            synchronized (LOCK) {
                 executors = new AppExecutors(Executors.newSingleThreadExecutor(),
                         Executors.newFixedThreadPool(3),
                         new MainThreadExecutor());
@@ -34,6 +40,11 @@ import android.os.Handler;
 
     Executor diskIO() {
         return diskIO;
+    }
+
+    Executor mainThread() {
+        /* TODO check the unused methods in AppExecutors */
+        return mainThread;
     }
 
     public Executor networkIO() {

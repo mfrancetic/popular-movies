@@ -15,6 +15,9 @@ class MovieLoader extends AsyncTaskLoader<List<Movie>> {
      */
     private final String urlAddress;
 
+    /**
+     * List of Movie objects
+     */
     private List<Movie> movieData;
 
     /**
@@ -34,6 +37,8 @@ class MovieLoader extends AsyncTaskLoader<List<Movie>> {
 
         movieData = MainActivity.movieList;
 
+        /* If there is movieData available, deliver the results.
+         * If not, forceLoad() */
         if (movieData.size() != 0) {
             deliverResult(movieData);
         } else {
@@ -43,6 +48,7 @@ class MovieLoader extends AsyncTaskLoader<List<Movie>> {
 
     @Override
     public void deliverResult(List<Movie> data) {
+        /* Deliver the results set in the onStartLoading method */
         movieData = data;
         super.deliverResult(data);
     }
@@ -56,6 +62,7 @@ class MovieLoader extends AsyncTaskLoader<List<Movie>> {
             return null;
         }
 
+        /* If there is movieData available, return it. If not, fetch the movie data */
         if (movieData.size() != 0) {
             return movieData;
         } else {
