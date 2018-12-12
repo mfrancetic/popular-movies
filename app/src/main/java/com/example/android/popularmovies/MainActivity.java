@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Generated value of the API key
      */
-    public static final String apiKey = "cf57b652542b1bf6395086b6ae46c100";
+    public static final String apiKey = "";
 
     /**
      * Constant value for the movie loader ID
