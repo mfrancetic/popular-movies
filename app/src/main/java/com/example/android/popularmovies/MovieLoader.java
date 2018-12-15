@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Loads a list of movies by using an AsyncTask to perform the network request to the given URL.
  */
-class MovieLoader extends AsyncTaskLoader<List<Movie>> {
+ class MovieLoader extends AsyncTaskLoader<List<Movie>> {
 
     /**
      * Query URL

@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -81,6 +82,9 @@ public class MainActivity extends AppCompatActivity
      */
     private static final String GRID_VIEW_STATE = "gridViewState";
 
+
+    private static final String MOVIE_LIST = "movieList";
+
     /**
      * movieGridView GridView object
      */
@@ -96,22 +100,26 @@ public class MainActivity extends AppCompatActivity
      */
     public static List<Movie> movieList;
 
+    Bundle savedInstanceStateBundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        savedInstanceStateBundle = savedInstanceState;
+
         /* Check if the savedInstanceState exists, and contains the key "movieList".
          * If so, get the parcelableArrayList under that key value from the savedInstanceState,
          * if not, get the parcelable from the intent. */
-        if (savedInstanceState == null || !savedInstanceState.containsKey("movieList")) {
+        if (savedInstanceStateBundle == null || !savedInstanceStateBundle.containsKey(MOVIE_LIST)) {
             movieList = new ArrayList<>();
+            initializeLoader();
         } else {
-            movieList = savedInstanceState.getParcelableArrayList("movieList");
-            gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
+            movieList = savedInstanceStateBundle.getParcelableArrayList(MOVIE_LIST);
+            gridViewState = savedInstanceStateBundle.getParcelable(GRID_VIEW_STATE);
         }
 
-        initializeLoader();
         generateSpinner();
         generateGridView();
     }
@@ -122,22 +130,23 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
         gridViewState = movieGridView.onSaveInstanceState();
         savedInstanceState.putParcelable(GRID_VIEW_STATE, gridViewState);
-        savedInstanceState.putParcelableArrayList("movieList", (ArrayList<? extends Parcelable>) movieList);
-        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
     }
 
     /**
      * Restore the gridViewState object under the key GRID_VIEW_STATE, as well as the
      * ParcelableArrayList under the key "movieList" from the savedInstanceState bundle
      */
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.getParcelableArrayList("movieList");
-        gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
-        super.onRestoreInstanceState(savedInstanceState);
-    }
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        movieList = savedInstanceState.getParcelableArrayList("movieList");
+//        gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
+//    }
 
     /**
      * Generate and populate the GridView
@@ -151,13 +160,16 @@ public class MainActivity extends AppCompatActivity
         movieGridView.setEmptyView(emptyTextView);
         loadingIndicator = findViewById(R.id.loading_indicator);
 
+
+
+
         movieAdapter = new MovieAdapter(this, movieList);
         movieGridView.setAdapter(movieAdapter);
-        /* If the gridViewState is not equal null, use the onRestoreInstanceState method to
-         * get the value */
-        if (gridViewState != null) {
-            movieGridView.onRestoreInstanceState(gridViewState);
-        }
+//        /* If the gridViewState is not equal null, use the onRestoreInstanceState method to
+//         * get the value */
+//        if (gridViewState != null) {
+//            movieGridView.onRestoreInstanceState(gridViewState);
+//        }
 
           /* Set an item click listener on the GridView, which sends an intent to the DetailActivity
          to open the details of the selected movie. */
@@ -201,38 +213,47 @@ public class MainActivity extends AppCompatActivity
                 /* Depending on the selected item, update the selectedOption value with the value
                  * of the popular or top_rated key, or load the Favorites from the database */
                 selectedPosition = parent.getSelectedItemPosition();
-                if (selectedPosition == 0) {
-                    selectedOption = getString(R.string.settings_sort_by_most_popular_value);
+                if (savedInstanceStateBundle == null) {
 
-                    /* Clear the GridView as a new query will be kicked off */
-                    movieAdapter.clear();
+                    if (selectedPosition == 0) {
+                        selectedOption = getString(R.string.settings_sort_by_most_popular_value);
 
-                    /* Hide the empty state text view as the loading indicator will be displayed */
-                    emptyTextView.setVisibility(View.GONE);
+                        /* Clear the GridView as a new query will be kicked off */
+                        movieAdapter.clear();
 
-                    /* Show the loading indicator while new date is being fetched */
-                    loadingIndicator.setVisibility(View.VISIBLE);
+                        /* Hide the empty state text view as the loading indicator will be displayed */
+                        emptyTextView.setVisibility(View.GONE);
 
-                    /* Restart the loader to query again The MovieDB as the query settings have been updated */
-                    getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
-                } else if (selectedPosition == 1) {
-                    selectedOption = getString(R.string.settings_sort_by_top_rated_value);
+                        /* Show the loading indicator while new date is being fetched */
+                        loadingIndicator.setVisibility(View.VISIBLE);
 
-                    /* Clear the GridView as a new query will be kicked off */
-                    movieAdapter.clear();
+//                    if (savedInstanceStateBundle == null) {
+                        /* Restart the loader to query again The MovieDB as the query settings have been updated */
+                        getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+//                    }
 
-                    /* Hide the empty state text view as the loading indicator will be displayed */
-                    emptyTextView.setVisibility(View.GONE);
+                    } else if (selectedPosition == 1) {
+                        selectedOption = getString(R.string.settings_sort_by_top_rated_value);
 
-                    /* Show the loading indicator while new date is being fetched */
-                    loadingIndicator.setVisibility(View.VISIBLE);
+                        /* Clear the GridView as a new query will be kicked off */
+                        movieAdapter.clear();
 
-                    /* Restart the loader to query again The MovieDB as the query settings have been updated */
-                    getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
-                } else if (selectedPosition == 2) {
-                    /* if the selectedPosition is 2, call the method loadFavorites to load all the
-                     * favorite movies from the local database */
-                    loadFavorites();
+                        /* Hide the empty state text view as the loading indicator will be displayed */
+                        emptyTextView.setVisibility(View.GONE);
+
+                        /* Show the loading indicator while new date is being fetched */
+                        loadingIndicator.setVisibility(View.VISIBLE);
+
+//                    if (savedInstanceStateBundle == null) {
+                        /* Restart the loader to query again The MovieDB as the query settings have been updated */
+                        getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
+//                    }
+
+                    } else if (selectedPosition == 2) {
+                        /* if the selectedPosition is 2, call the method loadFavorites to load all the
+                         * favorite movies from the local database */
+                        loadFavorites();
+                    }
                 }
             }
 
@@ -303,6 +324,12 @@ public class MainActivity extends AppCompatActivity
      * Initialize the loader
      */
     private void initializeLoader() {
+
+//        Bundle movieBundle = new Bundle();
+//        if (movieBundle.containsKey(MOVIE_LIST)) {
+//            movieBundle.putParcelableArrayList(MOVIE_LIST, savedInstanceStateBundle.getParcelableArrayList(MOVIE_LIST));
+//        }
+
         /* Get a reference to the ConnectivityManager to check state of network connectivity
          * and get details on the currently active default data network*/
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService
@@ -333,23 +360,69 @@ public class MainActivity extends AppCompatActivity
      * Create a new loader for the given URL
      */
     @Override
-    public Loader<List<Movie>> onCreateLoader(int id, Bundle bundle) {
+    public Loader<List<Movie>> onCreateLoader(int id, final Bundle args) {
+
+
+//        if (savedInstanceStateBundle != null && savedInstanceStateBundle.containsKey("movieList")) {
+//            movieList = savedInstanceStateBundle.getParcelableArrayList("movieList");
+//        }
 
         /* API key parameter that will be appended to the URL */
         String API_PARAM = "api_key";
 
-        Uri baseUri = Uri.parse(MOVIES_BASE_URL);
+        final Uri baseUri = Uri.parse(MOVIES_BASE_URL);
 
         /* buildUpon prepares the baseUri that we just parsed so we can add query parameters to it */
-        Uri.Builder uriBuilder = baseUri.buildUpon();
+        final Uri.Builder uriBuilder = baseUri.buildUpon();
 
         /* Append the encoded path with the selected sorting option and the API key as a
         query parameter */
         uriBuilder.appendEncodedPath(selectedOption);
         uriBuilder.appendQueryParameter(API_PARAM, apiKey);
 
+
         /* Return the completed uri */
         return new MovieLoader(this, uriBuilder.toString());
+
+//            List<Movie> movies;
+//
+//            @Override
+//            protected void onStartLoading() {
+//                super.onStartLoading();
+//
+//                if (args == null) {
+//                    return;
+//                }
+//
+//                if (movieList.size() != 0) {
+//                    deliverResult(movieList);
+//                } else {
+//                    forceLoad();
+//                }
+//            }
+//
+//            @Override
+//            public void deliverResult(List<Movie> data) {
+//                movieList = data;
+//                super.deliverResult(data);
+//            }
+//
+//            @Override
+//            public List<Movie> loadInBackground() {
+//
+//                movies = args.getParcelableArrayList(MOVIE_LIST);
+//
+//                if (uriBuilder.toString() == null) {
+//                    return null;
+//                }
+//
+//                if (movies.size() != 0) {
+//                    return movies;
+//                } else {
+//                    return QueryUtils.fetchMovieData(uriBuilder.toString());
+//                }
+//            }
+//        };
     }
 
     @Override
