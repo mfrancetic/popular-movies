@@ -13,6 +13,6 @@
     <string name="review_button">Cijeli kritički osvrt</string>
     <string name="toast_added_to_favorites">Film je dodan u listu favorita.</string>
     <string name="toast_deleted_from_favorites">Film je izbrisan iz liste favorita.</string>
-    <string name="toast_no_favorite_movies">Nema pohranjenih filmova u listi favorita.</string>
+    <string name="no_favorite_movies">Nema pohranjenih filmova u listi favorita.</string>
     <string name="trailer_label">Videozapis</string>
 </resources>

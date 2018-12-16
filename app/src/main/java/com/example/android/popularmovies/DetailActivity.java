@@ -95,6 +95,12 @@ public class DetailActivity extends AppCompatActivity {
      */
     AddMovieViewModel viewModel;
 
+    /**
+     * Key of the current movie
+     */
+
+    private static final String CURRENT_MOVIE = "currentMovie";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,10 +122,10 @@ public class DetailActivity extends AppCompatActivity {
         /* Check if the savedInstanceState exists, and contains the key "currentMovie".
          * If so, get the parcelable under that key value from the savedInstanceState,
          * if not, get the parcelable from the intent. */
-        if (savedInstanceState == null || !savedInstanceState.containsKey("currentMovie")) {
-            currentMovie = getIntent().getParcelableExtra("currentMovie");
+        if (savedInstanceState == null || !savedInstanceState.containsKey(CURRENT_MOVIE)) {
+            currentMovie = getIntent().getParcelableExtra(CURRENT_MOVIE);
         } else {
-            currentMovie = savedInstanceState.getParcelable("currentMovie");
+            currentMovie = savedInstanceState.getParcelable(CURRENT_MOVIE);
         }
         generateUI();
     }
@@ -130,7 +136,7 @@ public class DetailActivity extends AppCompatActivity {
      */
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelable("currentMovie", currentMovie);
+        savedInstanceState.putParcelable(CURRENT_MOVIE, currentMovie);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -140,8 +146,50 @@ public class DetailActivity extends AppCompatActivity {
      */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.getParcelable("currentMovie");
+        savedInstanceState.getParcelable(CURRENT_MOVIE);
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    /**
+     * Populate the fields related to reviews
+     */
+    void populateReviews() {
+        reviewAuthorTextView.setText(currentMovie.getReviewAuthor());
+        reviewTextView.setText(currentMovie.getReviewText());
+        String reviewUrl = currentMovie.getReviewUrl();
+        final Uri reviewUri = Uri.parse(reviewUrl);
+
+        /* Set an onClickListener to the fullReviewButton.*/
+        fullReviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+             /* When the user clicks on the button create and start an intent to
+                 open the full review */
+            public void onClick(View v) {
+                Intent openFullReviewIntent = new Intent(Intent.ACTION_VIEW);
+                openFullReviewIntent.setData(reviewUri);
+                getApplicationContext().startActivity(openFullReviewIntent);
+            }
+        });
+    }
+
+    /**
+     * Populate the fields related to trailers
+     */
+    void populateTrailers() {
+        String trailerUrlPath = currentMovie.getTrailerUrlPath();
+        final Uri trailerUri = Uri.parse(TRAILER_BASE_URL + trailerUrlPath);
+
+        /* Set an onClickListener to the playTrailerButton.*/
+        playTrailerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /* When the user clicks on the button create and start an intent to
+                 play the trailer */
+                Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
+                playTrailerIntent.setData(trailerUri);
+                getApplicationContext().startActivity(playTrailerIntent);
+            }
+        });
     }
 
     /**
@@ -214,21 +262,7 @@ public class DetailActivity extends AppCompatActivity {
                 reviewLabelTextView.setVisibility(View.GONE);
                 /* If there are review values, populate the UI with them */
             } else {
-                reviewAuthorTextView.setText(reviewAuthor);
-                reviewTextView.setText(reviewText);
-                reviewUrl = currentMovie.getReviewUrl();
-                final Uri reviewUri = Uri.parse(reviewUrl);
-                /* Set the onClickListener to the fullReviewButton.
-                 * Using the OnClick method, create and start the intent that opens the full
-                 * review using the review URl */
-                fullReviewButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent openFullReviewIntent = new Intent(Intent.ACTION_VIEW);
-                        openFullReviewIntent.setData(reviewUri);
-                        getApplicationContext().startActivity(openFullReviewIntent);
-                    }
-                });
+               populateReviews();
             }
         }
     }
@@ -292,19 +326,7 @@ public class DetailActivity extends AppCompatActivity {
                 trailerLabelTextView.setVisibility(View.GONE);
                 /* If there are trailer URL path values, populate the UI with it */
             } else {
-                trailerUrlPath = currentMovie.getTrailerUrlPath();
-                final Uri trailerUri = Uri.parse(TRAILER_BASE_URL + trailerUrlPath);
-                /* Set the onClickListener to the playTrailerButton.
-                 * Using the OnClick method, create and start the intent that opens the
-                 * trailer in the web browser using the trailer URl */
-                playTrailerButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
-                        playTrailerIntent.setData(trailerUri);
-                        getApplicationContext().startActivity(playTrailerIntent);
-                    }
-                });
+                populateTrailers();
             }
         }
     }
@@ -390,8 +412,17 @@ public class DetailActivity extends AppCompatActivity {
 
             /* Execute the TrailerAsyncTask and ReviewAsyncTask, using the trailer and review query
              * String */
-            new TrailerAsyncTask().execute(String.valueOf(id), QueryUtils.TRAILER_QUERY);
-            new ReviewAsyncTask().execute(String.valueOf(id), String.valueOf(QueryUtils.REVIEW_QUERY));
+            if (currentMovie.getTrailerUrlPath() == null) {
+                new TrailerAsyncTask().execute(String.valueOf(id), QueryUtils.TRAILER_QUERY);
+            } else {
+                populateTrailers();
+            }
+
+            if (currentMovie.getReviewUrl() == null) {
+                new ReviewAsyncTask().execute(String.valueOf(id), String.valueOf(QueryUtils.REVIEW_QUERY));
+            } else {
+              populateReviews();
+            }
 
             /* Set the onClickListener to tha addToFavorites button */
             addToFavoritesButton.setOnClickListener(new View.OnClickListener() {

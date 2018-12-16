@@ -77,6 +77,21 @@ public class MainActivity extends AppCompatActivity
     private Parcelable gridViewState;
 
     /**
+     * Selected position of the spinner
+     */
+    static int spinnerSelectedPosition;
+
+    /**
+     * Value of the spinner
+     */
+    int spinner;
+
+    /**
+     * Key of the spinner selected position
+     */
+    private static final String SPINNER_SELECTED_POSITION = "spinnerSelectedPosition";
+
+    /**
      * Key of the gridViewState
      */
     private static final String GRID_VIEW_STATE = "gridViewState";
@@ -96,6 +111,21 @@ public class MainActivity extends AppCompatActivity
      */
     public static List<Movie> movieList;
 
+    /**
+     * Key of the movie list
+     */
+    private static final String MOVIE_LIST = "movieList";
+
+    /**
+     * Key of the current movie
+     */
+    private static final String CURRENT_MOVIE = "currentMovie";
+
+    /**
+     * Api-key string
+     */
+    private static final String API_KEY = "api_key";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,14 +134,14 @@ public class MainActivity extends AppCompatActivity
         /* Check if the savedInstanceState exists, and contains the key "movieList".
          * If so, get the parcelableArrayList under that key value from the savedInstanceState,
          * if not, get the parcelable from the intent. */
-        if (savedInstanceState == null || !savedInstanceState.containsKey("movieList")) {
+        if (savedInstanceState == null || !savedInstanceState.containsKey(MOVIE_LIST)) {
             movieList = new ArrayList<>();
+            initializeLoader();
         } else {
-            movieList = savedInstanceState.getParcelableArrayList("movieList");
+            movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
             gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
+            spinnerSelectedPosition = savedInstanceState.getInt(SPINNER_SELECTED_POSITION);
         }
-
-        initializeLoader();
         generateSpinner();
         generateGridView();
     }
@@ -124,19 +154,9 @@ public class MainActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         gridViewState = movieGridView.onSaveInstanceState();
         savedInstanceState.putParcelable(GRID_VIEW_STATE, gridViewState);
-        savedInstanceState.putParcelableArrayList("movieList", (ArrayList<? extends Parcelable>) movieList);
+        savedInstanceState.putInt(SPINNER_SELECTED_POSITION, selectedPosition);
+        savedInstanceState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
         super.onSaveInstanceState(savedInstanceState);
-    }
-
-    /**
-     * Restore the gridViewState object under the key GRID_VIEW_STATE, as well as the
-     * ParcelableArrayList under the key "movieList" from the savedInstanceState bundle
-     */
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.getParcelableArrayList("movieList");
-        gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     /**
@@ -170,7 +190,7 @@ public class MainActivity extends AppCompatActivity
                 Context context = MainActivity.this;
                 Class destinationClass = DetailActivity.class;
                 Intent intent = new Intent(context, destinationClass);
-                intent.putExtra("currentMovie", currentMovie);
+                intent.putExtra(CURRENT_MOVIE, currentMovie);
                 startActivity(intent);
             }
         });
@@ -201,6 +221,10 @@ public class MainActivity extends AppCompatActivity
                 /* Depending on the selected item, update the selectedOption value with the value
                  * of the popular or top_rated key, or load the Favorites from the database */
                 selectedPosition = parent.getSelectedItemPosition();
+                if (!MainActivity.movieList.isEmpty() && selectedPosition == MainActivity.spinnerSelectedPosition) {
+                    loadingIndicator.setVisibility(View.GONE);
+                    return;
+                }
                 if (selectedPosition == 0) {
                     selectedOption = getString(R.string.settings_sort_by_most_popular_value);
 
@@ -266,8 +290,9 @@ public class MainActivity extends AppCompatActivity
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), getString(R.string.toast_no_favorite_movies),
-                                            Toast.LENGTH_SHORT).show();
+                                    movieAdapter.clear();
+                                    loadingIndicator.setVisibility(View.GONE);
+                                    emptyTextView.setText(R.string.no_favorite_movies);
                                 }
                             });
                         } else {
@@ -335,9 +360,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, Bundle bundle) {
 
-        /* API key parameter that will be appended to the URL */
-        String API_PARAM = "api_key";
-
         Uri baseUri = Uri.parse(MOVIES_BASE_URL);
 
         /* buildUpon prepares the baseUri that we just parsed so we can add query parameters to it */
@@ -346,7 +368,7 @@ public class MainActivity extends AppCompatActivity
         /* Append the encoded path with the selected sorting option and the API key as a
         query parameter */
         uriBuilder.appendEncodedPath(selectedOption);
-        uriBuilder.appendQueryParameter(API_PARAM, apiKey);
+        uriBuilder.appendQueryParameter(API_KEY, apiKey);
 
         /* Return the completed uri */
         return new MovieLoader(this, uriBuilder.toString());
