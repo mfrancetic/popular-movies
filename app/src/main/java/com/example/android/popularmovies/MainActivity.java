@@ -21,7 +21,6 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,37 +68,17 @@ public class MainActivity extends AppCompatActivity
     /**
      * SelectedPosition integer
      */
-    int selectedPosition;
-
-    /**
-     * Parcelable gridViewState, which will be stored to the onSaveInstanceState
-     */
-    private Parcelable gridViewState;
+    private int selectedPosition;
 
     /**
      * Selected position of the spinner
      */
-    static int spinnerSelectedPosition;
-
-    /**
-     * Value of the spinner
-     */
-    int spinner;
+    private static int spinnerSelectedPosition;
 
     /**
      * Key of the spinner selected position
      */
     private static final String SPINNER_SELECTED_POSITION = "spinnerSelectedPosition";
-
-    /**
-     * Key of the gridViewState
-     */
-    private static final String GRID_VIEW_STATE = "gridViewState";
-
-    /**
-     * movieGridView GridView object
-     */
-    GridView movieGridView;
 
     /**
      * database AppDatabase object
@@ -139,7 +118,6 @@ public class MainActivity extends AppCompatActivity
             initializeLoader();
         } else {
             movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
-            gridViewState = savedInstanceState.getParcelable(GRID_VIEW_STATE);
             spinnerSelectedPosition = savedInstanceState.getInt(SPINNER_SELECTED_POSITION);
         }
         generateSpinner();
@@ -147,13 +125,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Store the gridViewState object under the key GRID_VIEW_STATE, as well as the
-     * ParcelableArrayList under the key "movieList" to the savedInstanceState bundle
+     * Store the ParcelableArrayList under the key MOVIE_LIST and integer SPINNER_SELECTED_
+     * POSITION to the savedInstanceState bundle
      */
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
-        gridViewState = movieGridView.onSaveInstanceState();
-        savedInstanceState.putParcelable(GRID_VIEW_STATE, gridViewState);
         savedInstanceState.putInt(SPINNER_SELECTED_POSITION, selectedPosition);
         savedInstanceState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
         super.onSaveInstanceState(savedInstanceState);
@@ -166,18 +142,13 @@ public class MainActivity extends AppCompatActivity
         /* Find a reference to the GridView in the layout, create a new adapter that takes
          * an empty list of movies an input and set the adapter on the GridView,
          * so the grid can be populated in the user interface. */
-        movieGridView = findViewById(R.id.grid_view);
+        GridView movieGridView = findViewById(R.id.grid_view);
         emptyTextView = findViewById(R.id.empty_text_view);
         movieGridView.setEmptyView(emptyTextView);
         loadingIndicator = findViewById(R.id.loading_indicator);
 
         movieAdapter = new MovieAdapter(this, movieList);
         movieGridView.setAdapter(movieAdapter);
-        /* If the gridViewState is not equal null, use the onRestoreInstanceState method to
-         * get the value */
-        if (gridViewState != null) {
-            movieGridView.onRestoreInstanceState(gridViewState);
-        }
 
           /* Set an item click listener on the GridView, which sends an intent to the DetailActivity
          to open the details of the selected movie. */
@@ -258,6 +229,7 @@ public class MainActivity extends AppCompatActivity
                      * favorite movies from the local database */
                     loadFavorites();
                 }
+                MainActivity.spinnerSelectedPosition = selectedPosition;
             }
 
             @Override
@@ -269,7 +241,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Load the favorite movies saved in the local database, using the ViewModel and Observer
      */
-    void loadFavorites() {
+    private void loadFavorites() {
         MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
             @Override
@@ -304,7 +276,8 @@ public class MainActivity extends AppCompatActivity
                                     /* Clear the GridView as a new query will be kicked off */
                                     movieAdapter.clear();
 
-                                    /* Hide the empty state text view as the loading indicator will be displayed */
+                                    /* Hide the empty state text view as the loading indicator will
+                                    be displayed */
                                     emptyTextView.setVisibility(View.GONE);
 
                                     /* Show the loading indicator while new date is being fetched,
@@ -313,7 +286,9 @@ public class MainActivity extends AppCompatActivity
                                     indicator */
                                     loadingIndicator.setVisibility(View.VISIBLE);
                                     movieAdapter.notifyDataSetChanged();
-                                    movieAdapter.addAll(movies);
+                                    if (movies != null) {
+                                        movieAdapter.addAll(movies);
+                                    }
                                     loadingIndicator.setVisibility(View.GONE);
                                 }
                             });

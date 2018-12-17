@@ -15,4 +15,6 @@
     <string name="toast_deleted_from_favorites">Film je izbrisan iz liste favorita.</string>
     <string name="no_favorite_movies">Nema pohranjenih filmova u listi favorita.</string>
     <string name="trailer_label">Videozapis</string>
+    <string name="favorites_button">Tipka za favorite</string>
+    <string name="play_trailer_button">Tipka za videozapis</string>
 </resources>

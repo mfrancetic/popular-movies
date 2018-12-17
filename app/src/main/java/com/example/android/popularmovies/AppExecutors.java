@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 
 import android.os.Handler;
 
-
 /**
  * Global executor pools for the whole application.
  */
@@ -42,17 +41,18 @@ class AppExecutors {
         return diskIO;
     }
 
+    @SuppressWarnings("unused")
     Executor mainThread() {
-        /* TODO check the unused methods in AppExecutors */
         return mainThread;
     }
 
+    @SuppressWarnings("unused")
     public Executor networkIO() {
         return networkIO;
     }
 
     private static class MainThreadExecutor implements Executor {
-        private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+        private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
         @Override
         public void execute(@NonNull Runnable command) {

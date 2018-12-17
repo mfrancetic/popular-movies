@@ -8,6 +8,12 @@
     <!-- Content description of the movie poster [CHAR LIMIT=30] -->
     <string name="movie_poster_image">Movie poster</string>
 
+    <!-- Content description of the add/remove from favorites button [CHAR LIMIT=30] -->
+    <string name="favorites_button">Favorites button</string>
+
+    <!-- Content description of the play trailer button [CHAR LIMIT=30] -->
+    <string name="play_trailer_button">Play trailer button</string>
+
     <!-- Error message that appears when there is no internet connectivity [CHAR LIMIT=NONE] -->
     <string name="no_internet_connection">No internet connection</string>
 

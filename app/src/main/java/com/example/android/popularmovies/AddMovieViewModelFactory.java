@@ -4,7 +4,7 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
-public class AddMovieViewModelFactory extends ViewModelProvider.NewInstanceFactory {
+ class AddMovieViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
     private final AppDatabase movieDatabase;
     private final int movieId;
@@ -18,6 +18,7 @@ public class AddMovieViewModelFactory extends ViewModelProvider.NewInstanceFacto
 
     @NonNull
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
         return (T) new AddMovieViewModel(movieDatabase, movieId);
     }

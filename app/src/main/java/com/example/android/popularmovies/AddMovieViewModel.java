@@ -3,9 +3,9 @@ package com.example.android.popularmovies;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
-public class AddMovieViewModel extends ViewModel {
+ class AddMovieViewModel extends ViewModel {
 
-    private LiveData<Movie> movie;
+    private final LiveData<Movie> movie;
 
     /* Constructor which initializes the Movie variable and receives the database
      * and the movieId */

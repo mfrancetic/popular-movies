@@ -8,10 +8,10 @@ import android.util.Log;
 
 import java.util.List;
 
-public class MainViewModel extends AndroidViewModel {
+ class MainViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = MainViewModel.class.getSimpleName();
-    private LiveData<List<Movie>> movies;
+    private final LiveData<List<Movie>> movies;
 
     public MainViewModel(@NonNull Application application) {
         super(application);

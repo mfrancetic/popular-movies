@@ -31,75 +31,69 @@ public class DetailActivity extends AppCompatActivity {
     private static final String LOG_TAG = DetailActivity.class.getSimpleName();
 
     /**
-     * The base URL for watching the trailers
-     */
-    String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
-
-    /**
      * CurrentMovie Movie object
      */
-    Movie currentMovie;
+    private Movie currentMovie;
 
     /**
      * database AppDatabase object
      */
-    AppDatabase database;
+    private AppDatabase database;
 
     /**
      * Boolean used for checking if the movie is added to the Favorites list
      */
-    boolean isFavorite;
+    private boolean isFavorite;
 
     /**
      * ImageButton for playing the trailer
      */
-    ImageButton playTrailerButton;
+    private ImageButton playTrailerButton;
 
     /**
      * ImageButton for adding the movie to the Favorites list
      */
-    ImageButton addToFavoritesButton;
+    private ImageButton addToFavoritesButton;
 
     /**
      * TextView displaying the label for the review
      */
-    TextView reviewLabelTextView;
+    private TextView reviewLabelTextView;
 
     /**
      * Button for viewing the complete review
      */
-    Button fullReviewButton;
+    private Button fullReviewButton;
 
     /**
      * TextView displaying the the author of the review
      */
-    TextView reviewAuthorTextView;
+    private TextView reviewAuthorTextView;
 
     /**
      * TextView displaying the the text of the review
      */
-    TextView reviewTextView;
-
-    /**
-     * TextView displaying the the name of the trailer
-     */
-    TextView trailerTextView;
+    private TextView reviewTextView;
 
     /**
      * TextView displaying the the label for the trailer
      */
-    TextView trailerLabelTextView;
+    private TextView trailerLabelTextView;
 
     /**
      * viewModel AddMovieViewModel object
      */
-    AddMovieViewModel viewModel;
+    private AddMovieViewModel viewModel;
 
     /**
      * Key of the current movie
      */
-
     private static final String CURRENT_MOVIE = "currentMovie";
+
+    /**
+     * Key of the boolean isFavorite
+     */
+    private static final String IS_FAVORITE = "isFavorite";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,48 +106,40 @@ public class DetailActivity extends AppCompatActivity {
         fullReviewButton = findViewById(R.id.full_review_button);
         reviewAuthorTextView = findViewById(R.id.review_author_text_view);
         reviewTextView = findViewById(R.id.review_text_view);
-        trailerTextView = findViewById(R.id.trailer_text_view);
         trailerLabelTextView = findViewById(R.id.trailer_label);
         reviewLabelTextView = findViewById(R.id.review_label);
 
         /* Get instance of the AppDatabase using the app context */
         database = AppDatabase.getInstance(getApplicationContext());
 
-        /* Check if the savedInstanceState exists, and contains the key "currentMovie".
+        /* Check if the savedInstanceState exists, and contains the key CURRENT_MOVIE.
          * If so, get the parcelable under that key value from the savedInstanceState,
          * if not, get the parcelable from the intent. */
         if (savedInstanceState == null || !savedInstanceState.containsKey(CURRENT_MOVIE)) {
             currentMovie = getIntent().getParcelableExtra(CURRENT_MOVIE);
+            checkIfFavorite();
         } else {
             currentMovie = savedInstanceState.getParcelable(CURRENT_MOVIE);
+            isFavorite = savedInstanceState.getBoolean(IS_FAVORITE);
         }
         generateUI();
     }
 
     /**
-     * Store the currentMovie object under the key "currentMovie" to the savedInstanceState
+     * Store the currentMovie object under the key CURRENT_MOVIE to the savedInstanceState
      * bundle
      */
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelable(CURRENT_MOVIE, currentMovie);
+        savedInstanceState.putBoolean(IS_FAVORITE, isFavorite);
         super.onSaveInstanceState(savedInstanceState);
-    }
-
-    /**
-     * Restore the currentMovie object under the key "currentMovie" from the savedInstanceState
-     * bundle
-     */
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.getParcelable(CURRENT_MOVIE);
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     /**
      * Populate the fields related to reviews
      */
-    void populateReviews() {
+    private void populateReviews() {
         reviewAuthorTextView.setText(currentMovie.getReviewAuthor());
         reviewTextView.setText(currentMovie.getReviewText());
         String reviewUrl = currentMovie.getReviewUrl();
@@ -175,7 +161,9 @@ public class DetailActivity extends AppCompatActivity {
     /**
      * Populate the fields related to trailers
      */
-    void populateTrailers() {
+    private void populateTrailers() {
+        String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
+
         String trailerUrlPath = currentMovie.getTrailerUrlPath();
         final Uri trailerUri = Uri.parse(TRAILER_BASE_URL + trailerUrlPath);
 
@@ -188,6 +176,41 @@ public class DetailActivity extends AppCompatActivity {
                 Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
                 playTrailerIntent.setData(trailerUri);
                 getApplicationContext().startActivity(playTrailerIntent);
+            }
+        });
+    }
+
+    /** Checks if the movie is saved in the Favorites list */
+    private void checkIfFavorite() {
+        /* Get the id of the current movie */
+        final int id = currentMovie.getMovieId();
+
+        /* Load the movie by the id of the current movie from the database */
+        database.movieDao().loadMovieById(id);
+
+        /* Declare the AddTaskViewModelFactory using the database and id parameters */
+        AddMovieViewModelFactory factory = new AddMovieViewModelFactory(database, id);
+            /* Initialize the viewModel variable by calling ViewModelProviders.of
+            /* for that use the factory created */
+        viewModel = ViewModelProviders.of(this, factory).get(AddMovieViewModel.class);
+
+        /* Observe the LiveData object in the ViewModel. Use it also when
+         * removing the observer */
+        viewModel.getMovie().observe(this, new Observer<Movie>() {
+            @Override
+            public void onChanged(@Nullable Movie movieInDatabase) {
+                viewModel.getMovie().removeObserver(this);
+                /* If the movieInDatabase isn't null, set the isFavorite boolean to true,
+                 * and set the image resource of the button the ic_star_rate */
+                if (movieInDatabase != null) {
+                    isFavorite = true;
+                    addToFavoritesButton.setImageResource(R.drawable.ic_star_rate);
+                    /* If the movieInDatabase is null, set the isFavorite boolean to false,
+                     * and set the image resource of the button the ic_star_empty */
+                } else {
+                    isFavorite = false;
+                    addToFavoritesButton.setImageResource(R.drawable.ic_star_empty);
+                }
             }
         });
     }
@@ -262,7 +285,7 @@ public class DetailActivity extends AppCompatActivity {
                 reviewLabelTextView.setVisibility(View.GONE);
                 /* If there are review values, populate the UI with them */
             } else {
-               populateReviews();
+                populateReviews();
             }
         }
     }
@@ -322,7 +345,6 @@ public class DetailActivity extends AppCompatActivity {
              * GONE */
             if (trailerUrlPath == null) {
                 playTrailerButton.setVisibility(View.GONE);
-                trailerTextView.setVisibility(View.GONE);
                 trailerLabelTextView.setVisibility(View.GONE);
                 /* If there are trailer URL path values, populate the UI with it */
             } else {
@@ -355,9 +377,6 @@ public class DetailActivity extends AppCompatActivity {
             /* Get the id of the current movie */
             final int id = currentMovie.getMovieId();
 
-            /* Load the movie by the id of the current movie from the database */
-            database.movieDao().loadMovieById(id);
-
             /* Get the title of the current movie and set it to the titleTextView */
             final String title = currentMovie.getMovieTitle();
             titleTextView.setText(title);
@@ -374,54 +393,30 @@ public class DetailActivity extends AppCompatActivity {
             final String plotSynopsis = currentMovie.getMoviePlotSynopsis();
             plotSynopsisTextView.setText(plotSynopsis);
 
-            /* Declare the AddTaskViewModelFactory using the database and id parameters */
-            AddMovieViewModelFactory factory = new AddMovieViewModelFactory(database, id);
-            /* Initialize the viewModel variable by calling ViewModelProviders.of
-            /* for that use the factory created */
-            viewModel = ViewModelProviders.of(this, factory).get(AddMovieViewModel.class);
-
-            /* Observe the LiveData object in the ViewModel. Use it also when
-             * removing the observer */
-            viewModel.getMovie().observe(this, new Observer<Movie>() {
-                @Override
-                public void onChanged(@Nullable Movie movieInDatabase) {
-                    viewModel.getMovie().removeObserver(this);
-                    /* If the movieInDatabase isn't null, set the isFavorite boolean to true,
-                     * and set the image resource of the button the ic_star_rate */
-                    if (movieInDatabase != null) {
-                        isFavorite = true;
-                        addToFavoritesButton.setImageResource(R.drawable.ic_star_rate);
-                        /* If the movieInDatabase is null, set the isFavorite boolean to false,
-                         * and set the image resource of the button the ic_star_empty */
-                    } else {
-                        isFavorite = false;
-                        addToFavoritesButton.setImageResource(R.drawable.ic_star_empty);
-                    }
-                }
-            });
-
             /* Get the full poster path Uri of the current movie and using the Picasso library
               load it into the moviePosterImageView */
             final String posterPath = currentMovie.getMovieUrlPoster();
 
             Uri fullPosterPathUri = MovieAdapter.formatPosterPath(currentMovie);
             com.squareup.picasso.Picasso
-                    .with(context)
+                    .get()
                     .load(fullPosterPathUri)
                     .into(moviePosterImageView);
 
-            /* Execute the TrailerAsyncTask and ReviewAsyncTask, using the trailer and review query
-             * String */
+            /* If the trailer path is equal null, execute the TrailerAsyncTask using the trailer
+            query String. If not, populate the trailers. */
             if (currentMovie.getTrailerUrlPath() == null) {
                 new TrailerAsyncTask().execute(String.valueOf(id), QueryUtils.TRAILER_QUERY);
             } else {
                 populateTrailers();
             }
 
+            /* If the review path is equal null, execute the ReviewAsyncTask using the review
+            query String. If not, populate the trailers. */
             if (currentMovie.getReviewUrl() == null) {
                 new ReviewAsyncTask().execute(String.valueOf(id), String.valueOf(QueryUtils.REVIEW_QUERY));
             } else {
-              populateReviews();
+                populateReviews();
             }
 
             /* Set the onClickListener to tha addToFavorites button */

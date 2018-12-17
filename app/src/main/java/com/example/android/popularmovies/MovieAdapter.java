@@ -71,13 +71,13 @@ class MovieAdapter extends ArrayAdapter<Movie> {
 
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             com.squareup.picasso.Picasso
-                    .with(context)
+                    .get()
                     .load(fullPosterPathUri)
                     .centerInside().resize(width / 3, height)
                     .into(gridItemImageView);
         } else {
             com.squareup.picasso.Picasso
-                    .with(context)
+                    .get()
                     .load(fullPosterPathUri)
                     .centerInside().resize(width / 2, height / 2)
                     .into(gridItemImageView);
