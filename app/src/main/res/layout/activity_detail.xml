@@ -76,50 +76,18 @@
             app:layout_constraintTop_toTopOf="@id/release_date_label"
             tools:text="2018-10-24" />
 
-        <TextView
-            android:id="@+id/review_label"
-            style="@style/TextViewLabelStyle"
-            android:paddingTop="@dimen/padding_label"
-            android:text="@string/review_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/plot_synopsis_text_view" />
-
-        <TextView
-            android:id="@+id/review_text_view"
-            style="@style/TextViewValueStyle"
-            android:maxLines="3"
-            app:layout_constraintTop_toBottomOf="@id/review_label"
-            tools:text="Breathtaking movie" />
-
-        <TextView
-            android:id="@+id/review_author_text_view"
-            style="@style/TextViewValueStyle"
-            android:textStyle="italic"
-            app:layout_constraintTop_toBottomOf="@id/review_text_view"
-            tools:text="Author" />
-
-        <Button
-            android:id="@+id/full_review_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/review_button"
-            app:layout_constraintTop_toBottomOf="@id/review_author_text_view" />
-
-        <TextView
-            android:id="@+id/trailer_label"
-            style="@style/TextViewLabelStyle"
-            android:paddingTop="@dimen/padding_label"
-            android:text="@string/trailer_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/full_review_button" />
-
-        <ImageButton
-            android:id="@+id/play_trailer_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_play_arrow"
-            android:contentDescription="@string/play_trailer_button"
-            app:layout_constraintTop_toBottomOf="@id/trailer_label" />
-
     </android.support.constraint.ConstraintLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/trailers_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/reviews_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
 </ScrollView>
