@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Generated value of the API key
      */
-    public static final String apiKey = "";
+    public static final String apiKey = "cf57b652542b1bf6395086b6ae46c100";
 
     /**
      * Constant value for the movie loader ID
@@ -105,10 +105,25 @@ public class MainActivity extends AppCompatActivity
      */
     private static final String API_KEY = "api_key";
 
+    /**
+     * Current scrolling position
+     */
+    int scrollIndex;
+
+    /**
+     * Key of the scrollIndex
+     */
+    private static final String SCROLL_INDEX = "scrollIndex";
+
+    /** GridView */
+    private GridView movieGridView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        movieGridView = findViewById(R.id.grid_view);
 
         /* Check if the savedInstanceState exists, and contains the key "movieList".
          * If so, get the parcelableArrayList under that key value from the savedInstanceState,
@@ -119,9 +134,25 @@ public class MainActivity extends AppCompatActivity
         } else {
             movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
             spinnerSelectedPosition = savedInstanceState.getInt(SPINNER_SELECTED_POSITION);
+            scrollIndex = savedInstanceState.getInt(SCROLL_INDEX);
         }
         generateSpinner();
         generateGridView();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
+        spinnerSelectedPosition = savedInstanceState.getInt(SPINNER_SELECTED_POSITION);
+        scrollIndex = savedInstanceState.getInt(SCROLL_INDEX);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        movieList = new ArrayList<>();
+        initializeLoader();
     }
 
     /**
@@ -132,8 +163,12 @@ public class MainActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putInt(SPINNER_SELECTED_POSITION, selectedPosition);
         savedInstanceState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
+        scrollIndex = movieGridView.getFirstVisiblePosition();
+        savedInstanceState.putInt(SCROLL_INDEX, scrollIndex);
         super.onSaveInstanceState(savedInstanceState);
     }
+
+
 
     /**
      * Generate and populate the GridView
@@ -142,13 +177,13 @@ public class MainActivity extends AppCompatActivity
         /* Find a reference to the GridView in the layout, create a new adapter that takes
          * an empty list of movies an input and set the adapter on the GridView,
          * so the grid can be populated in the user interface. */
-        GridView movieGridView = findViewById(R.id.grid_view);
         emptyTextView = findViewById(R.id.empty_text_view);
         movieGridView.setEmptyView(emptyTextView);
         loadingIndicator = findViewById(R.id.loading_indicator);
 
         movieAdapter = new MovieAdapter(this, movieList);
         movieGridView.setAdapter(movieAdapter);
+        movieGridView.setSelection(scrollIndex);
 
           /* Set an item click listener on the GridView, which sends an intent to the DetailActivity
          to open the details of the selected movie. */
@@ -194,6 +229,7 @@ public class MainActivity extends AppCompatActivity
                 selectedPosition = parent.getSelectedItemPosition();
                 if (!MainActivity.movieList.isEmpty() && selectedPosition == MainActivity.spinnerSelectedPosition) {
                     loadingIndicator.setVisibility(View.GONE);
+                    movieGridView.setSelection(scrollIndex);
                     return;
                 }
                 if (selectedPosition == 0) {
@@ -365,6 +401,7 @@ public class MainActivity extends AppCompatActivity
          This will trigger the GridView to update */
         if (movies != null && !movies.isEmpty()) {
             movieAdapter.addAll(movies);
+            movieGridView.setSelection(scrollIndex);
         }
     }
 
