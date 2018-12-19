@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,9 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,21 +84,6 @@ public class DetailActivity extends AppCompatActivity {
     private List<Trailer> trailers;
 
     /**
-     * Button for viewing the complete review
-     */
-    private Button fullReviewButton;
-
-    /**
-     * TextView displaying the the author of the review
-     */
-    private TextView reviewAuthorTextView;
-
-    /**
-     * TextView displaying the the text of the review
-     */
-    private TextView reviewTextView;
-
-    /**
      * TextView displaying the the label for the trailer
      */
     private TextView trailerLabelTextView;
@@ -111,6 +97,35 @@ public class DetailActivity extends AppCompatActivity {
      * Key of the current movie
      */
     private static final String CURRENT_MOVIE = "currentMovie";
+
+    /**
+     * Key of the scroll position X
+     */
+    private static final String SCROLL_POSITION_X = "scrollPositionX";
+
+    /**
+     * Key of the scroll position Y
+     */
+    private static final String SCROLL_POSITION_Y = "scrollPositionY";
+
+    /** Scroll position X */
+    private int scrollX;
+
+    /** Scroll position Y */
+    private int scrollY;
+
+    /** ScrollView */
+    private ScrollView scrollView;
+
+    /**
+     * Key of the list of trailers
+     */
+    private static final String TRAILERS = "trailers";
+
+    /**
+     * Key of the list of reviews
+     */
+    private static final String REVIEWS = "reviews";
 
     /**
      * Key of the boolean isFavorite
@@ -151,6 +166,8 @@ public class DetailActivity extends AppCompatActivity {
         addToFavoritesButton = findViewById(R.id.favorites_button);
         reviewRecyclerView = findViewById(R.id.reviews_recycler_view);
         trailerRecyclerView = findViewById(R.id.trailers_recycler_view);
+        reviewLabelTextView = findViewById(R.id.review_label);
+        scrollView = findViewById(R.id.scroll_view);
 
         trailerAdapter = new TrailerAdapter(trailers);
         reviewAdapter = new ReviewAdapter(reviews);
@@ -173,6 +190,10 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             currentMovie = savedInstanceState.getParcelable(CURRENT_MOVIE);
             isFavorite = savedInstanceState.getBoolean(IS_FAVORITE);
+            trailers = savedInstanceState.getParcelableArrayList(TRAILERS);
+            reviews = savedInstanceState.getParcelableArrayList(REVIEWS);
+            scrollX = savedInstanceState.getInt(SCROLL_POSITION_X);
+            scrollY = savedInstanceState.getInt(SCROLL_POSITION_Y);
         }
         generateUI();
     }
@@ -185,6 +206,12 @@ public class DetailActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelable(CURRENT_MOVIE, currentMovie);
         savedInstanceState.putBoolean(IS_FAVORITE, isFavorite);
+        savedInstanceState.putParcelableArrayList(TRAILERS, (ArrayList<? extends Parcelable>) trailers);
+        savedInstanceState.putParcelableArrayList(REVIEWS, (ArrayList<? extends Parcelable>) reviews);
+        scrollX = scrollView.getScrollX();
+        scrollY = scrollView.getScrollY();
+        savedInstanceState.putInt(SCROLL_POSITION_X, scrollX);
+        savedInstanceState.putInt(SCROLL_POSITION_Y, scrollY);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -257,7 +284,7 @@ public class DetailActivity extends AppCompatActivity {
 
             int id = currentMovie.getMovieId();
 
-            List<Review> reviews = new ArrayList<>();
+            reviews = new ArrayList<>();
 
             try {
                 URL url = QueryUtils.createReviewTrailerUrl(String.valueOf(id), QueryUtils.REVIEW_QUERY);
@@ -306,17 +333,26 @@ public class DetailActivity extends AppCompatActivity {
          */
         @Override
         protected void onPostExecute(List<Review> reviews) {
-            if (reviews == null) {
+            if (reviews.size() == 0) {
                 reviewLabelTextView.setVisibility(View.GONE);
                 reviewRecyclerView.setVisibility(View.GONE);
                 /* If there are review values, populate the UI with them */
             } else {
-                reviewAdapter = new ReviewAdapter(reviews);
-                reviewRecyclerView.setAdapter(reviewAdapter);
-                reviewRecyclerView.setLayoutManager(new LinearLayoutManager(DetailActivity.this));
+                populateReviews();
             }
-
         }
+    }
+
+    private void populateReviews() {
+        reviewAdapter = new ReviewAdapter(reviews);
+        reviewRecyclerView.setAdapter(reviewAdapter);
+        reviewRecyclerView.setLayoutManager(new LinearLayoutManager(DetailActivity.this));
+    }
+
+    private void populateTrailers() {
+        trailerAdapter = new TrailerAdapter(trailers);
+        trailerRecyclerView.setAdapter(trailerAdapter);
+        trailerRecyclerView.setLayoutManager(new LinearLayoutManager(DetailActivity.this));
     }
 
     /**
@@ -333,7 +369,7 @@ public class DetailActivity extends AppCompatActivity {
 
             int id = currentMovie.getMovieId();
 
-            List<Trailer> trailers = new ArrayList<>();
+            trailers = new ArrayList<>();
 
             try {
                 URL url = QueryUtils.createReviewTrailerUrl(String.valueOf(id), QueryUtils.TRAILER_QUERY);
@@ -379,16 +415,13 @@ public class DetailActivity extends AppCompatActivity {
         protected void onPostExecute(List<Trailer> trailers) {
             /* If there is no trailer URL path, set the visibility of the corresponding views to
              * GONE */
-            if (trailers == null) {
+            if (trailers.size() == 0) {
                 trailerLabelTextView.setVisibility(View.GONE);
                 trailerRecyclerView.setVisibility(View.GONE);
             } else {
-                trailerAdapter = new TrailerAdapter(trailers);
-                trailerRecyclerView.setAdapter(trailerAdapter);
-                trailerRecyclerView.setLayoutManager(new LinearLayoutManager(DetailActivity.this));
+                populateTrailers();
             }
         }
-
     }
 
 
@@ -399,6 +432,8 @@ public class DetailActivity extends AppCompatActivity {
 
         /* Get BaseContext and store it a Context variable */
         final Context context = getBaseContext();
+
+        scrollView.scrollTo(scrollX, scrollY);
 
         /* Find the TextViews of the title, plot_synopsis, user_rating and release_date,
          * as well as the ImageView of the movie_poster_thumbnail. */
@@ -412,7 +447,6 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         /* If the intent exists, get the currentMovie object from the parcelableExtra */
         if (intent != null) {
-
             /* Get the id of the current movie */
             final int id = currentMovie.getMovieId();
 
@@ -444,19 +478,19 @@ public class DetailActivity extends AppCompatActivity {
 
             /* If the trailer path is equal null, execute the TrailerAsyncTask using the trailer
             query String. If not, populate the trailers. */
-//            if (currentMovie.getTrailerUrlPath() == null) {
-            new TrailerAsyncTask().execute(String.valueOf(id), QueryUtils.TRAILER_QUERY);
-//            } else {
-//                populateTrailers();
-//            }
+            if (trailers == null) {
+                new TrailerAsyncTask().execute(String.valueOf(id), QueryUtils.TRAILER_QUERY);
+            } else {
+                populateTrailers();
+            }
 
             /* If the review path is equal null, execute the ReviewAsyncTask using the review
             query String. If not, populate the trailers. */
-//            if (currentMovie.getReviewUrl() == null) {
-            new ReviewAsyncTask().execute(String.valueOf(id), String.valueOf(QueryUtils.REVIEW_QUERY));
-//            } else {
-//                populateReviews();
-//            }
+            if (reviews == null) {
+                new ReviewAsyncTask().execute(String.valueOf(id), String.valueOf(QueryUtils.REVIEW_QUERY));
+            } else {
+                populateReviews();
+            }
 
             /* Set the onClickListener to tha addToFavorites button */
             addToFavoritesButton.setOnClickListener(new View.OnClickListener() {

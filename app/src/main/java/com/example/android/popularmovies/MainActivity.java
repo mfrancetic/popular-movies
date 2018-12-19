@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Generated value of the API key
      */
-    public static final String apiKey = "cf57b652542b1bf6395086b6ae46c100";
+    public static final String apiKey = "";
 
     /**
      * Constant value for the movie loader ID
@@ -152,7 +152,11 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         movieList = new ArrayList<>();
-        initializeLoader();
+        if (spinnerSelectedPosition == 0 || spinnerSelectedPosition == 1) {
+            initializeLoader();
+        } else {
+            loadFavorites();
+        }
     }
 
     /**
@@ -165,7 +169,7 @@ public class MainActivity extends AppCompatActivity
         savedInstanceState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
         scrollIndex = movieGridView.getFirstVisiblePosition();
         savedInstanceState.putInt(SCROLL_INDEX, scrollIndex);
-        super.onSaveInstanceState(savedInstanceState);
+         super.onSaveInstanceState(savedInstanceState);
     }
 
 
@@ -266,6 +270,7 @@ public class MainActivity extends AppCompatActivity
                     loadFavorites();
                 }
                 MainActivity.spinnerSelectedPosition = selectedPosition;
+                movieGridView.setSelection(scrollIndex);
             }
 
             @Override
