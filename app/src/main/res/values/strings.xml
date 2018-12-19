@@ -30,13 +30,13 @@
     <string name="user_rating_label">User rating:</string>
 
     <!-- Label for the review in the DetailActivity [CHAR LIMIT=30] -->
-    <string name="review_label">Review</string>
+    <string name="review_label">Reviews</string>
 
     <!-- Label for the full review button in the DetailActivity [CHAR LIMIT = 20] -->
     <string name="review_button">Full review</string>
 
     <!-- Label for the trailer in the DetailActivity [CHAR LIMIT=30] -->
-    <string name="trailer_label">Trailer</string>
+    <string name="trailer_label">Trailers</string>
 
     <!-- Label for sort-by most popular option [CHAR LIMIT=30]-->
     <string name="settings_sort_by_most_popular_label">Most popular</string>

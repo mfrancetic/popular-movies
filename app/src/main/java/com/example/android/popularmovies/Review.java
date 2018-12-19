@@ -20,10 +20,7 @@ public class Review implements Parcelable {
      */
     private String reviewUrl;
 
-    private Review() {
-    }
-
-    Review (String reviewAuthor, String reviewText, String reviewUrl) {
+    Review(String reviewAuthor, String reviewText, String reviewUrl) {
         this.reviewAuthor = reviewAuthor;
         this.reviewText = reviewText;
         this.reviewUrl = reviewUrl;
@@ -50,21 +47,21 @@ public class Review implements Parcelable {
     /**
      * Returns the author of the movie review
      */
-    String getReviewAuthor() {
+    public String getReviewAuthor() {
         return reviewAuthor;
     }
 
     /**
      * Returns the text of the movie review
      */
-    String getReviewText() {
+    public String getReviewText() {
         return reviewText;
     }
 
     /**
      * Returns the URL of the movie review
      */
-    String getReviewUrl() {
+    public String getReviewUrl() {
         return reviewUrl;
     }
 

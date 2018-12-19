@@ -1,24 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/padding_scroll_view"
     xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
-        android:id="@+id/review_label"
-        style="@style/TextViewLabelStyle"
-        android:paddingTop="@dimen/padding_label"
-        android:text="@string/review_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/plot_synopsis_text_view" />
-
-    <TextView
         android:id="@+id/review_text_view"
         style="@style/TextViewValueStyle"
         android:maxLines="3"
-        app:layout_constraintTop_toBottomOf="@id/review_label"
+        android:ellipsize="end"
         tools:text="Breathtaking movie" />
 
     <TextView
@@ -34,7 +26,4 @@
         android:layout_height="wrap_content"
         android:text="@string/review_button"
         app:layout_constraintTop_toBottomOf="@id/review_author_text_view" />
-
-
-
 </android.support.constraint.ConstraintLayout>

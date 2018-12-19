@@ -1,35 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="@dimen/padding_scroll_view"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <TextView
-        android:id="@+id/trailer_label"
-        style="@style/TextViewLabelStyle"
-        android:paddingTop="@dimen/padding_label"
-        android:text="@string/trailer_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/full_review_button" />
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_scroll_view">
 
     <ImageButton
         android:id="@+id/play_trailer_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_play_arrow"
         android:contentDescription="@string/play_trailer_button"
-        app:layout_constraintTop_toBottomOf="@id/trailer_label" />
+        android:src="@drawable/ic_play_arrow" />
 
     <TextView
         android:id="@+id/trailer_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Official Trailer"
-        app:layout_constraintTop_toTopOf="@id/play_trailer_button"
-        app:layout_constraintStart_toEndOf="@id/play_trailer_button"
         app:layout_constraintBottom_toBottomOf="@id/play_trailer_button"
-        />
-
+        app:layout_constraintStart_toEndOf="@id/play_trailer_button"
+        app:layout_constraintTop_toTopOf="@id/play_trailer_button"
+        tools:text="Official Trailer" />
 </android.support.constraint.ConstraintLayout>

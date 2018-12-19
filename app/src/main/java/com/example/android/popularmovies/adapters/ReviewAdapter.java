@@ -1,15 +1,15 @@
 package com.example.android.popularmovies.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.Review;
 
@@ -18,12 +18,6 @@ import java.util.List;
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder {
-
-        /**
-         * TextView displaying the label for the review
-         */
-        TextView reviewLabelTextView;
-
 
         /**
          * TextView displaying the the text of the review
@@ -43,7 +37,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            reviewLabelTextView = itemView.findViewById(R.id.review_label);
             reviewTextView = itemView.findViewById(R.id.review_text_view);
             reviewAuthorTextView = itemView.findViewById(R.id.review_author_text_view);
             fullReviewButton = itemView.findViewById(R.id.full_review_button);
@@ -69,14 +62,37 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ReviewAdapter.ViewHolder viewHolder, int position) {
         Review review = reviews.get(position);
-        TextView reviewLabelTextView = viewHolder.reviewLabelTextView;
         TextView reviewTextView = viewHolder.reviewTextView;
         TextView reviewAuthorTextView = viewHolder.reviewAuthorTextView;
         Button fullReviewButton = viewHolder.fullReviewButton;
+
+        final Context context = fullReviewButton.getContext();
+
+        reviewTextView.setText(review.getReviewText());
+        reviewAuthorTextView.setText(review.getReviewAuthor());
+
+        String reviewUrl = review.getReviewUrl();
+        final Uri reviewUri = Uri.parse(reviewUrl);
+
+        /* Set an onClickListener to the fullReviewButton.*/
+        fullReviewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+             /* When the user clicks on the button create and start an intent to
+                 open the full review */
+            public void onClick(View v) {
+                Intent openFullReviewIntent = new Intent(Intent.ACTION_VIEW);
+                openFullReviewIntent.setData(reviewUri);
+                context.startActivity(openFullReviewIntent);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return reviews.size();
+        if (reviews == null) {
+            return 0;
+        } else {
+            return reviews.size();
+        }
     }
 }

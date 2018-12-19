@@ -44,26 +44,6 @@ public class Movie implements Parcelable {
     private String moviePlotSynopsis;
 
     /**
-     * Trailer URL path of the movie
-     */
-    private String trailerUrlPath;
-
-    /**
-     * Author of the movie review
-     */
-    private String reviewAuthor;
-
-    /**
-     * Text of the movie review
-     */
-    private String reviewText;
-
-    /**
-     * URL of the movie review
-     */
-    private String reviewUrl;
-
-    /**
      * Constructs a new Movie object.
      *
      * @param movieId           is the ID of the movie
@@ -72,24 +52,15 @@ public class Movie implements Parcelable {
      * @param movieUrlPoster    is the url of the movie poster
      * @param movieUserRating   is the user rating of the movie
      * @param moviePlotSynopsis is the plot synopsis of the movie
-     * @param trailerUrlPath    is the trailer URL path of the movie
-     * @param reviewAuthor      is the author of the movie review
-     * @param reviewText        is the text of the movie review
-     * @param reviewUrl         is the URL of the movie review
      */
     Movie(int movieId, String movieTitle, String movieReleaseDate, String movieUrlPoster,
-          String movieUserRating, String moviePlotSynopsis, String trailerUrlPath,
-          String reviewAuthor, String reviewText, String reviewUrl) {
+          String movieUserRating, String moviePlotSynopsis) {
         this.movieId = movieId;
         this.movieTitle = movieTitle;
         this.movieReleaseDate = movieReleaseDate;
         this.movieUrlPoster = movieUrlPoster;
         this.movieUserRating = movieUserRating;
         this.moviePlotSynopsis = moviePlotSynopsis;
-        this.trailerUrlPath = trailerUrlPath;
-        this.reviewAuthor = reviewAuthor;
-        this.reviewText = reviewText;
-        this.reviewUrl = reviewUrl;
     }
 
     @Ignore
@@ -103,15 +74,19 @@ public class Movie implements Parcelable {
         movieUrlPoster = in.readString();
         movieUserRating = in.readString();
         moviePlotSynopsis = in.readString();
-        trailerUrlPath = in.readString();
-        reviewAuthor = in.readString();
-        reviewText = in.readString();
-        reviewUrl = in.readString();
     }
 
     @Override
     public int describeContents() {
         return 0;
+    }
+
+
+    /**
+     * Returns the ID of the movie
+     */
+    int getMovieId() {
+        return movieId;
     }
 
     /**
@@ -147,48 +122,6 @@ public class Movie implements Parcelable {
      */
     String getMoviePlotSynopsis() {
         return moviePlotSynopsis;
-    }
-
-    /**
-     * Returns the ID of the movie
-     */
-    int getMovieId() {
-        return movieId;
-    }
-
-    /**
-     * Returns the trailer URL path of the movie
-     */
-    String getTrailerUrlPath() {
-        return trailerUrlPath;
-    }
-
-    /**
-     * Returns the author of the movie review
-     */
-    String getReviewAuthor() {
-        return reviewAuthor;
-    }
-
-    /**
-     * Returns the text of the movie review
-     */
-    String getReviewText() {
-        return reviewText;
-    }
-
-    /**
-     * Returns the URL of the movie review
-     */
-    String getReviewUrl() {
-        return reviewUrl;
-    }
-
-    /**
-     * Sets the URL of the movie trailer
-     */
-    void setTrailerUrlPath(String trailerUrlPath) {
-        this.trailerUrlPath = trailerUrlPath;
     }
 
     /**
@@ -234,27 +167,6 @@ public class Movie implements Parcelable {
     }
 
     /**
-     * Sets the author of the movie review
-     */
-    void setReviewAuthor(String reviewAuthor) {
-        this.reviewAuthor = reviewAuthor;
-    }
-
-    /**
-     * Sets the text of the movie review
-     */
-    void setReviewText(String reviewText) {
-        this.reviewText = reviewText;
-    }
-
-    /**
-     * Sets the URL of the movie review
-     */
-    void setReviewUrl(String reviewUrl) {
-        this.reviewUrl = reviewUrl;
-    }
-
-    /**
      * Writes all the movie parameters to the parcel
      */
     @Override
@@ -265,10 +177,6 @@ public class Movie implements Parcelable {
         parcel.writeString(movieUrlPoster);
         parcel.writeString(movieUserRating);
         parcel.writeString(moviePlotSynopsis);
-        parcel.writeString(trailerUrlPath);
-        parcel.writeString(reviewAuthor);
-        parcel.writeString(reviewText);
-        parcel.writeString(reviewUrl);
     }
 
     /**

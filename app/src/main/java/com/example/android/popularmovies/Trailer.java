@@ -53,15 +53,15 @@ public class Trailer implements Parcelable {
         return trailerName;
     }
 
-     /* Sets the URL of the movie trailer
+    /* Sets the URL of the movie trailer
      */
-    public void setTrailerUrlPath(String trailerUrlPath) {
+    void setTrailerUrlPath(String trailerUrlPath) {
         this.trailerUrlPath = trailerUrlPath;
     }
 
-     /* Sets the name of the movie trailer
+    /* Sets the name of the movie trailer
      */
-    public void setTrailerName(String trailerName) {
+    void setTrailerName(String trailerName) {
         this.trailerName = trailerName;
     }
 
@@ -77,6 +77,5 @@ public class Trailer implements Parcelable {
         public Trailer[] newArray(int i) {
             return new Trailer[i];
         }
-
     };
 }
