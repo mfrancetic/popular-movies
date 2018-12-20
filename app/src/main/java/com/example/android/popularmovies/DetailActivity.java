@@ -108,13 +108,19 @@ public class DetailActivity extends AppCompatActivity {
      */
     private static final String SCROLL_POSITION_Y = "scrollPositionY";
 
-    /** Scroll position X */
+    /**
+     * Scroll position X
+     */
     private int scrollX;
 
-    /** Scroll position Y */
+    /**
+     * Scroll position Y
+     */
     private int scrollY;
 
-    /** ScrollView */
+    /**
+     * ScrollView
+     */
     private ScrollView scrollView;
 
     /**
@@ -157,6 +163,16 @@ public class DetailActivity extends AppCompatActivity {
      */
     private String trailerName;
 
+    /**
+     * Selected position of the spinner
+     */
+    private static int spinnerSelectedPosition;
+
+    /**
+     * Key of the spinner selected position
+     */
+    private static final String SPINNER_SELECTED_POSITION = "spinnerSelectedPosition";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,6 +202,7 @@ public class DetailActivity extends AppCompatActivity {
          * if not, get the parcelable from the intent. */
         if (savedInstanceState == null || !savedInstanceState.containsKey(CURRENT_MOVIE)) {
             currentMovie = getIntent().getParcelableExtra(CURRENT_MOVIE);
+            spinnerSelectedPosition = getIntent().getIntExtra(SPINNER_SELECTED_POSITION, 0);
             checkIfFavorite();
         } else {
             currentMovie = savedInstanceState.getParcelable(CURRENT_MOVIE);
@@ -229,6 +246,7 @@ public class DetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(DetailActivity.this, MainActivity.class);
+//        intent.putExtra(SPINNER_SELECTED_POSITION, spinnerSelectedPosition);
         startActivity(intent);
         finish();
     }

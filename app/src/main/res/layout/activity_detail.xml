@@ -56,7 +56,9 @@
             android:contentDescription="@string/favorites_button"
             android:src="@drawable/ic_star_rate"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/title_text_view" />
+            app:layout_constraintTop_toTopOf="@id/user_rating_text_view"
+            app:layout_constraintBottom_toBottomOf="@id/release_date_text_view"
+            />
 
         <TextView
             style="@style/TextViewValueStyle"

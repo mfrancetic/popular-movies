@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Generated value of the API key
      */
-    public static final String apiKey = "";
+    public static final String apiKey = "cf57b652542b1bf6395086b6ae46c100";
 
     /**
      * Constant value for the movie loader ID
@@ -115,8 +115,15 @@ public class MainActivity extends AppCompatActivity
      */
     private static final String SCROLL_INDEX = "scrollIndex";
 
-    /** GridView */
+    /**
+     * GridView
+     */
     private GridView movieGridView;
+
+    /**
+     * Intent that came from the DetailActivity
+     */
+    private Intent detailActivityIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,12 +158,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        movieList = new ArrayList<>();
-        if (spinnerSelectedPosition == 0 || spinnerSelectedPosition == 1) {
-            initializeLoader();
-        } else {
-            loadFavorites();
-        }
+        selectedPosition = spinnerSelectedPosition;
     }
 
     /**
@@ -169,9 +171,8 @@ public class MainActivity extends AppCompatActivity
         savedInstanceState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
         scrollIndex = movieGridView.getFirstVisiblePosition();
         savedInstanceState.putInt(SCROLL_INDEX, scrollIndex);
-         super.onSaveInstanceState(savedInstanceState);
+        super.onSaveInstanceState(savedInstanceState);
     }
-
 
 
     /**
@@ -201,6 +202,7 @@ public class MainActivity extends AppCompatActivity
                 Class destinationClass = DetailActivity.class;
                 Intent intent = new Intent(context, destinationClass);
                 intent.putExtra(CURRENT_MOVIE, currentMovie);
+//                intent.putExtra(SPINNER_SELECTED_POSITION, spinnerSelectedPosition);
                 startActivity(intent);
             }
         });
@@ -212,8 +214,6 @@ public class MainActivity extends AppCompatActivity
      * Generate the Spinner, which enables sorting between most popular and top rated movies
      */
     private void generateSpinner() {
-        /* Get the value for the most popular movies and store them in the selectedOption variable */
-        selectedOption = getString(R.string.settings_sort_by_most_popular_value);
 
         Spinner spinner = findViewById(R.id.spinner);
 
@@ -224,13 +224,17 @@ public class MainActivity extends AppCompatActivity
         spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
 
+        spinner.setSelection(spinnerSelectedPosition);
+
         /* Set the OnItemSelectedListener on the Spinner */
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 /* Depending on the selected item, update the selectedOption value with the value
                  * of the popular or top_rated key, or load the Favorites from the database */
-                selectedPosition = parent.getSelectedItemPosition();
+
+                    selectedPosition = parent.getSelectedItemPosition();
+
                 if (!MainActivity.movieList.isEmpty() && selectedPosition == MainActivity.spinnerSelectedPosition) {
                     loadingIndicator.setVisibility(View.GONE);
                     movieGridView.setSelection(scrollIndex);
@@ -406,8 +410,8 @@ public class MainActivity extends AppCompatActivity
          This will trigger the GridView to update */
         if (movies != null && !movies.isEmpty()) {
             movieAdapter.addAll(movies);
-            movieGridView.setSelection(scrollIndex);
         }
+        movieGridView.setSelection(scrollIndex);
     }
 
     /**
