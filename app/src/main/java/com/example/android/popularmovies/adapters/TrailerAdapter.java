@@ -18,28 +18,29 @@ import java.util.List;
 
 public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHolder> {
 
-    private List<Trailer> trailers;
+    /**
+     * List of trailers
+     */
+    private final List<Trailer> trailers;
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
         /**
          * ImageButton for playing the trailer
          */
-        ImageButton playTrailerButton;
+        final ImageButton playTrailerButton;
 
         /**
          * TextView for displaying the name of the trailer
          */
-        TextView trailerNameTextView;
+        final TextView trailerNameTextView;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             playTrailerButton = itemView.findViewById(R.id.play_trailer_button);
             trailerNameTextView = itemView.findViewById(R.id.trailer_name);
         }
     }
-
 
     public TrailerAdapter(List<Trailer> trailers) {
         this.trailers = trailers;
@@ -50,9 +51,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
     public TrailerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View trailerView = inflater.inflate(R.layout.trailer_list_item, parent, false);
-
         return new ViewHolder(trailerView);
     }
 
@@ -67,8 +66,8 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
 
         final Context context = playTrailerButton.getContext();
 
+        /* Get the trailer URL path and create a Uri */
         String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
-
         String trailerUrlPath = trailer.getTrailerUrlPath();
         final Uri trailerUri = Uri.parse(TRAILER_BASE_URL + trailerUrlPath);
 
@@ -76,16 +75,18 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHold
         playTrailerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /* When the user clicks on the button create and start an intent to
-                 play the trailer */
+                /* When the playTrailerButton is clicked, a new intent to open the trailers is
+                 * created and started*/
                 Intent playTrailerIntent = new Intent(Intent.ACTION_VIEW);
                 playTrailerIntent.setData(trailerUri);
                 context.startActivity(playTrailerIntent);
             }
         });
-
     }
 
+    /**
+     * Returns the number of items in the trailer list
+     */
     @Override
     public int getItemCount() {
         if (trailers == null) {

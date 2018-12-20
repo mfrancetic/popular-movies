@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Current scrolling position
      */
-    int scrollIndex;
+    private int scrollIndex;
 
     /**
      * Key of the scrollIndex
@@ -120,11 +120,6 @@ public class MainActivity extends AppCompatActivity
      */
     private GridView movieGridView;
 
-    /**
-     * Intent that came from the DetailActivity
-     */
-    private Intent detailActivityIntent;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,8 +128,8 @@ public class MainActivity extends AppCompatActivity
         movieGridView = findViewById(R.id.grid_view);
 
         /* Check if the savedInstanceState exists, and contains the key "movieList".
-         * If so, get the parcelableArrayList under that key value from the savedInstanceState,
-         * if not, get the parcelable from the intent. */
+         * If so, get the values under their keys from the savedInstanceState,
+         * if not, create a new ArrayList and initialize the loader. */
         if (savedInstanceState == null || !savedInstanceState.containsKey(MOVIE_LIST)) {
             movieList = new ArrayList<>();
             initializeLoader();
@@ -147,6 +142,9 @@ public class MainActivity extends AppCompatActivity
         generateGridView();
     }
 
+    /**
+     * Restores the saved values from the savedInstanceState
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
@@ -155,15 +153,24 @@ public class MainActivity extends AppCompatActivity
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+    /**
+     * OnResume the selected spinner position is checked - and the initializeLoader method (for
+     * popular or top rated movies) or loadFavorites (for favorite movies) method is called respectively
+     */
     @Override
     protected void onResume() {
         super.onResume();
+        movieList = new ArrayList<>();
         selectedPosition = spinnerSelectedPosition;
+        if (spinnerSelectedPosition == 0 || spinnerSelectedPosition == 1) {
+            initializeLoader();
+        } else {
+            loadFavorites();
+        }
     }
 
     /**
-     * Store the ParcelableArrayList under the key MOVIE_LIST and integer SPINNER_SELECTED_
-     * POSITION to the savedInstanceState bundle
+     * Store the values under their keys to the savedInstanceState bundle
      */
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -173,7 +180,6 @@ public class MainActivity extends AppCompatActivity
         savedInstanceState.putInt(SCROLL_INDEX, scrollIndex);
         super.onSaveInstanceState(savedInstanceState);
     }
-
 
     /**
      * Generate and populate the GridView
@@ -202,7 +208,6 @@ public class MainActivity extends AppCompatActivity
                 Class destinationClass = DetailActivity.class;
                 Intent intent = new Intent(context, destinationClass);
                 intent.putExtra(CURRENT_MOVIE, currentMovie);
-//                intent.putExtra(SPINNER_SELECTED_POSITION, spinnerSelectedPosition);
                 startActivity(intent);
             }
         });
@@ -223,7 +228,6 @@ public class MainActivity extends AppCompatActivity
 
         spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
-
         spinner.setSelection(spinnerSelectedPosition);
 
         /* Set the OnItemSelectedListener on the Spinner */
@@ -233,7 +237,7 @@ public class MainActivity extends AppCompatActivity
                 /* Depending on the selected item, update the selectedOption value with the value
                  * of the popular or top_rated key, or load the Favorites from the database */
 
-                    selectedPosition = parent.getSelectedItemPosition();
+                selectedPosition = parent.getSelectedItemPosition();
 
                 if (!MainActivity.movieList.isEmpty() && selectedPosition == MainActivity.spinnerSelectedPosition) {
                     loadingIndicator.setVisibility(View.GONE);

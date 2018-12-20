@@ -26,9 +26,6 @@ public class Trailer implements Parcelable {
         parcel.writeString(trailerName);
     }
 
-    private Trailer() {
-    }
-
     Trailer(String trailerUrlPath, String trailerName) {
         this.trailerUrlPath = trailerUrlPath;
         this.trailerName = trailerName;
@@ -65,7 +62,9 @@ public class Trailer implements Parcelable {
         this.trailerName = trailerName;
     }
 
-
+    /**
+     * Creates and returns a new Trailer object, as well as a new Trailer Array
+     */
     static final Parcelable.Creator<Trailer> CREATOR = new Parcelable.Creator<Trailer>() {
 
         @Override

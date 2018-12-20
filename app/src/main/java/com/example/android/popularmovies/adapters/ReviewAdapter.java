@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.example.android.popularmovies.R;
 import com.example.android.popularmovies.Review;
 
@@ -22,20 +23,20 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         /**
          * TextView displaying the the text of the review
          */
-        private TextView reviewTextView;
+        private final TextView reviewTextView;
 
         /**
          * TextView displaying the the author of the review
          */
-        TextView reviewAuthorTextView;
+        final TextView reviewAuthorTextView;
 
         /**
          * Button for viewing the complete review
          */
-        Button fullReviewButton;
+        final Button fullReviewButton;
 
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             reviewTextView = itemView.findViewById(R.id.review_text_view);
             reviewAuthorTextView = itemView.findViewById(R.id.review_author_text_view);
@@ -43,7 +44,10 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         }
     }
 
-    private List<Review> reviews;
+    /**
+     * List of reviews
+     */
+    private final List<Review> reviews;
 
     public ReviewAdapter(List<Review> reviews) {
         this.reviews = reviews;
@@ -54,7 +58,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
     public ReviewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View reviewView = inflater.inflate(R.layout.review_list_item, parent, false);
         return new ViewHolder(reviewView);
     }
@@ -77,7 +80,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         /* Set an onClickListener to the fullReviewButton.*/
         fullReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
-             /* When the user clicks on the button create and start an intent to
+             /* When the user clicks on the fullReviewButton, a new intent is created and started to
                  open the full review */
             public void onClick(View v) {
                 Intent openFullReviewIntent = new Intent(Intent.ACTION_VIEW);
@@ -87,6 +90,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
         });
     }
 
+    /**
+     * Returns the number of items in the review list
+     */
     @Override
     public int getItemCount() {
         if (reviews == null) {

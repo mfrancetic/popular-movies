@@ -86,7 +86,9 @@ public class Review implements Parcelable {
         this.reviewUrl = reviewUrl;
     }
 
-
+    /**
+     * Creates and returns a new Review object, as well as a new Review Array
+     */
     public static final Creator<Review> CREATOR = new Parcelable.Creator<Review>() {
         @Override
         public Review createFromParcel(Parcel parcel) {
