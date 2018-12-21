@@ -17,4 +17,6 @@
     <string name="trailer_label">Videozapis</string>
     <string name="favorites_button">Tipka za favorite</string>
     <string name="play_trailer_button">Tipka za videozapis</string>
+    <string name="no_reviews_found">Nema pronađenih kritičkih osvrta.</string>
+    <string name="no_trailers_found">Nema pronađenih videozapisa.</string>
 </resources>

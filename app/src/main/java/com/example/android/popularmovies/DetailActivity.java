@@ -63,6 +63,16 @@ public class DetailActivity extends AppCompatActivity {
     private TextView reviewLabelTextView;
 
     /**
+     * TextView that is displayed when the trailer list is empty
+     */
+    private TextView emptyTrailerTextView;
+
+    /**
+     * TextView that is displayed when the review list is empty
+     */
+    private TextView emptyReviewTextView;
+
+    /**
      * Review list
      */
     private List<Review> reviews;
@@ -159,6 +169,8 @@ public class DetailActivity extends AppCompatActivity {
         reviewLabelTextView = findViewById(R.id.review_label);
         trailerLabelTextView = findViewById(R.id.trailer_label);
         scrollView = findViewById(R.id.scroll_view);
+        emptyReviewTextView = findViewById(R.id.empty_review_view);
+        emptyTrailerTextView = findViewById(R.id.empty_trailer_view);
 
         /* Create a new TrailerAdapter and ReviewAdapter */
         trailerAdapter = new TrailerAdapter(trailers);
@@ -328,10 +340,11 @@ public class DetailActivity extends AppCompatActivity {
          */
         @Override
         protected void onPostExecute(List<Review> reviews) {
-            /* If there are no reviews, hide the reviewLabel and reviewRecyclerView */
+            /* If there are no reviews, hide the reviewRecyclerView and inform the user there
+             * are no reviews found */
             if (reviews.size() == 0) {
-                reviewLabelTextView.setVisibility(View.GONE);
                 reviewRecyclerView.setVisibility(View.GONE);
+                emptyReviewTextView.setText(getString(R.string.no_reviews_found));
                 /* If there are review values, populate the UI with them */
             } else {
                 populateReviews();
@@ -345,6 +358,8 @@ public class DetailActivity extends AppCompatActivity {
     private void populateReviews() {
         reviewAdapter = new ReviewAdapter(reviews);
         reviewRecyclerView.setAdapter(reviewAdapter);
+        reviewRecyclerView.setVisibility(View.VISIBLE);
+        emptyReviewTextView.setVisibility(View.GONE);
         reviewRecyclerView.setLayoutManager(new LinearLayoutManager(DetailActivity.this));
     }
 
@@ -353,13 +368,15 @@ public class DetailActivity extends AppCompatActivity {
      */
     private void populateTrailers() {
         trailerAdapter = new TrailerAdapter(trailers);
+        trailerRecyclerView.setVisibility(View.VISIBLE);
         trailerRecyclerView.setAdapter(trailerAdapter);
+        emptyTrailerTextView.setVisibility(View.GONE);
         trailerRecyclerView.setLayoutManager(new LinearLayoutManager(DetailActivity.this));
     }
 
     /**
      * TrailerAsyncTask class that uses the movie ID to create the trailerUrlPath String of that
-     * movie, makes the HTTP request and parses the JSON String in order to create a new Trailer object.
+     * movie, makes the HTTP request and parses the JSON String in order to create a cnew Trailer object.
      * Returns a list of trailers.
      */
     private class TrailerAsyncTask extends AsyncTask<String, Void, List<Trailer>> {
@@ -414,10 +431,11 @@ public class DetailActivity extends AppCompatActivity {
          */
         @Override
         protected void onPostExecute(List<Trailer> trailers) {
-            /* If there are no trailers, hide the trailerLabel and trailerRecyclerView */
+            /* If there are no trailers, hide the trailerRecyclerView and inform the user there
+             * are no trailers found */
             if (trailers.size() == 0) {
-                trailerLabelTextView.setVisibility(View.GONE);
                 trailerRecyclerView.setVisibility(View.GONE);
+                emptyTrailerTextView.setText(getString(R.string.no_trailers_found));
             } else {
                 populateTrailers();
             }
@@ -480,14 +498,19 @@ public class DetailActivity extends AppCompatActivity {
             query String. If not, populate the trailers. */
             if (trailers == null) {
                 new TrailerAsyncTask().execute(String.valueOf(id), QueryUtils.TRAILER_QUERY);
+            } else if (trailers.size() == 0) {
+                emptyTrailerTextView.setText(getString(R.string.no_trailers_found));
             } else {
                 populateTrailers();
             }
+
 
             /* If there are no reviews, execute the ReviewAsyncTask using the review
             query String. If not, populate the reviews. */
             if (reviews == null) {
                 new ReviewAsyncTask().execute(String.valueOf(id), String.valueOf(QueryUtils.REVIEW_QUERY));
+            } else if (reviews.size() == 0) {
+                emptyReviewTextView.setText(getString(R.string.no_reviews_found));
             } else {
                 populateReviews();
             }

@@ -20,6 +20,12 @@
     <!-- Text to display in the grid when there are no movies [CHAR LIMIT=NONE]-->
     <string name="no_movies_found">No movies found</string>
 
+    <!-- Text to display in the DetailActivity when there are no trailers [CHAR LIMIT=NONE]-->
+    <string name="no_trailers_found">No trailers found</string>
+
+    <!-- Text to display in the DetailActivity when there are no trailers [CHAR LIMIT=NONE]-->
+    <string name="no_reviews_found">No reviews found</string>
+
     <!-- Maximum possible user rating, displayed in the DetailActivity [CHAR LIMIT=NONE]-->
     <string name="user_rating_maximum" translatable="false">/10</string>
 
