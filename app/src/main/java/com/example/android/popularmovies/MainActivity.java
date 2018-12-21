@@ -282,6 +282,7 @@ public class MainActivity extends AppCompatActivity
                     loadFavorites();
                 }
                 MainActivity.spinnerSelectedPosition = selectedPosition;
+                movieGridView.smoothScrollToPosition(scrollIndex);
                 movieGridView.setSelection(scrollIndex);
             }
 
@@ -406,6 +407,7 @@ public class MainActivity extends AppCompatActivity
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
 
         if (spinnerSelectedPosition == 2) {
+
             movieGridView.setSelection(scrollIndex);
             return;
         } else if (movies.size()== 0 && movieList.size()!= 0) {
@@ -417,7 +419,7 @@ public class MainActivity extends AppCompatActivity
 
             /* If there is a valid list of movies, then add them to the adapter's data set.
             This will trigger the GridView to update */
-            if (movies != null && !movies.isEmpty()) {
+            if (!movies.isEmpty()) {
                 movieAdapter.addAll(movies);
             } else {
                 /* Set empty state text to display "No movies found." */
