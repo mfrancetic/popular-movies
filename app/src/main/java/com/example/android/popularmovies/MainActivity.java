@@ -130,9 +130,11 @@ public class MainActivity extends AppCompatActivity
         /* Check if the savedInstanceState exists, and contains the key "movieList".
          * If so, get the values under their keys from the savedInstanceState,
          * if not, create a new ArrayList and initialize the loader. */
-        if (savedInstanceState == null || !savedInstanceState.containsKey(MOVIE_LIST)) {
-            movieList = new ArrayList<>();
-            initializeLoader();
+        if (savedInstanceState == null) {
+            if (movieList == null) {
+                movieList = new ArrayList<>();
+                initializeLoader();
+            }
         } else {
             movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
             spinnerSelectedPosition = savedInstanceState.getInt(SPINNER_SELECTED_POSITION);
@@ -160,12 +162,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        movieList = new ArrayList<>();
         selectedPosition = spinnerSelectedPosition;
-        if (spinnerSelectedPosition == 0 || spinnerSelectedPosition == 1) {
-            initializeLoader();
-        } else {
+        if (spinnerSelectedPosition == 2) {
             loadFavorites();
+        } else {
+            if (movieList == null) {
+                movieList = new ArrayList<>();
+                initializeLoader();
+            }
         }
     }
 
@@ -400,20 +404,27 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
-        /* Hide loading indicator because the data has been loaded */
-        View loadingIndicator = findViewById(R.id.loading_indicator);
-        loadingIndicator.setVisibility(View.GONE);
 
-        /* Set empty state text to display "No movies found." */
-        emptyTextView.setText(R.string.no_movies_found);
+        if (spinnerSelectedPosition == 2) {
+            movieGridView.setSelection(scrollIndex);
+            return;
+        } else if (movies.size()== 0 && movieList.size()!= 0) {
+            return;
+        } else {
+            /* Hide loading indicator because the data has been loaded */
+            View loadingIndicator = findViewById(R.id.loading_indicator);
+            loadingIndicator.setVisibility(View.GONE);
 
-        /* Clear the adapter of previous movie data */
-        movieAdapter.clear();
-
-        /* If there is a valid list of movies, then add them to the adapter's data set.
-         This will trigger the GridView to update */
-        if (movies != null && !movies.isEmpty()) {
-            movieAdapter.addAll(movies);
+            /* If there is a valid list of movies, then add them to the adapter's data set.
+            This will trigger the GridView to update */
+            if (movies != null && !movies.isEmpty()) {
+                movieAdapter.addAll(movies);
+            } else {
+                /* Set empty state text to display "No movies found." */
+                emptyTextView.setText(R.string.no_movies_found);
+                /* Clear the adapter of previous movie data */
+                movieAdapter.clear();
+            }
         }
         movieGridView.setSelection(scrollIndex);
     }

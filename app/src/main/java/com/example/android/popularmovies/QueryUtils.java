@@ -172,7 +172,8 @@ final class QueryUtils {
                 output.append(line);
                 line = reader.readLine();
             }
-        }
+            reader.close();
+         }
         return output.toString();
     }
 
