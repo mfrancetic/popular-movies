@@ -195,8 +195,14 @@ public class MainActivity extends AppCompatActivity
         emptyTextView = findViewById(R.id.empty_text_view);
         movieGridView.setEmptyView(emptyTextView);
         loadingIndicator = findViewById(R.id.loading_indicator);
+        if (movieAdapter == null) {
+            movieAdapter = new MovieAdapter(this, movieList);
+            movieAdapter.addAll(movieList);
+        } else {
+            movieAdapter.clear();
+//            movieAdapter.addAll(movieList);
+        }
 
-        movieAdapter = new MovieAdapter(this, movieList);
         movieGridView.setAdapter(movieAdapter);
         movieGridView.setSelection(scrollIndex);
 
@@ -407,25 +413,26 @@ public class MainActivity extends AppCompatActivity
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {
 
         if (spinnerSelectedPosition == 2) {
-
             movieGridView.setSelection(scrollIndex);
             return;
-        } else if (movies.size()== 0 && movieList.size()!= 0) {
-            return;
+//        } else if (movies.size() == 0 && movieList.size() != 0) {
+//            return;
+            
         } else {
             /* Hide loading indicator because the data has been loaded */
             View loadingIndicator = findViewById(R.id.loading_indicator);
             loadingIndicator.setVisibility(View.GONE);
+            movieAdapter.clear();
 
             /* If there is a valid list of movies, then add them to the adapter's data set.
             This will trigger the GridView to update */
-            if (!movies.isEmpty()) {
+            if (movies != null && !movies.isEmpty()) {
                 movieAdapter.addAll(movies);
             } else {
                 /* Set empty state text to display "No movies found." */
                 emptyTextView.setText(R.string.no_movies_found);
                 /* Clear the adapter of previous movie data */
-                movieAdapter.clear();
+//                movieAdapter.clear();
             }
         }
         movieGridView.setSelection(scrollIndex);
