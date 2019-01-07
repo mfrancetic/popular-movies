@@ -117,12 +117,12 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Current scrolling position
      */
-    private int scrollIndex;
+    private Parcelable savedRecyclerViewState;
 
     /**
      * Key of the scrollIndex
      */
-    private static final String SCROLL_INDEX = "scrollIndex";
+    private static final String RECYCLER_VIEW_BUNDLE = "recyclerViewBundle";
 
     /**
      * GridView
@@ -170,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
             movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
             spinnerSelectedPosition = savedInstanceState.getInt(SPINNER_SELECTED_POSITION);
 //            scrollIndex = savedInstanceState.getInt(SCROLL_INDEX);
+            savedRecyclerViewState = savedInstanceState.getParcelable(RECYCLER_VIEW_BUNDLE);
+            movieRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerViewState);
         }
         generateSpinner();
         generateRecyclerView();
@@ -180,10 +182,10 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
         movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
         spinnerSelectedPosition = savedInstanceState.getInt(SPINNER_SELECTED_POSITION);
 //        scrollIndex = savedInstanceState.getInt(SCROLL_INDEX);
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     /**
@@ -211,11 +213,13 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putInt(SPINNER_SELECTED_POSITION, selectedPosition);
         savedInstanceState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
 //        scrollIndex = movieRecyclerView.getFirstVisiblePosition();
 //        savedInstanceState.putInt(SCROLL_INDEX, scrollIndex);
-        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putParcelable(RECYCLER_VIEW_BUNDLE, movieRecyclerView.getLayoutManager().onSaveInstanceState());
+
     }
 
     /**
@@ -228,6 +232,9 @@ public class MainActivity extends AppCompatActivity {
         emptyTextView.setVisibility(View.GONE);
         loadingIndicator.setVisibility(View.GONE);
         movieRecyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
+        if (savedRecyclerViewState != null) {
+            movieRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerViewState);
+        }
     }
 
     /**
