@@ -1,6 +1,7 @@
 package com.example.android.popularmovies;
 
 import android.app.LoaderManager;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -152,6 +153,10 @@ public class MainActivity extends AppCompatActivity {
         /* Get instance of the AppDatabase using the app context */
         appDatabase = AppDatabase.getInstance(getApplicationContext());
 
+        if (selectedOption == null) {
+            selectedOption = getString(R.string.settings_sort_by_most_popular_value);
+        }
+
         /* Check if the savedInstanceState exists, and contains the key "movieList".
          * If so, get the values under their keys from the savedInstanceState,
          * if not, create a new ArrayList and initialize the loader. */
@@ -159,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
             if (movieList == null) {
                 movieList = new ArrayList<>();
 //                initializeLoader();
+                new MovieAsyncTask().execute(selectedOption);
             }
         } else {
             movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
@@ -195,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
                 movieList = new ArrayList<>();
 //                initializeLoader();
             }
+            populateMovies();
         }
     }
 
@@ -207,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putInt(SPINNER_SELECTED_POSITION, selectedPosition);
         savedInstanceState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
 //        scrollIndex = movieRecyclerView.getFirstVisiblePosition();
-        savedInstanceState.putInt(SCROLL_INDEX, scrollIndex);
+//        savedInstanceState.putInt(SCROLL_INDEX, scrollIndex);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -258,6 +265,10 @@ public class MainActivity extends AppCompatActivity {
             populateMovies();
         }
 
+//        if (movieList.size() == 0) {
+//            new MovieAsyncTask().execute(selectedOption);
+//        }
+
         /* Get the instance of the AppDatabase using the ApplicationContext */
         appDatabase = AppDatabase.getInstance(getApplicationContext());
     }
@@ -289,23 +300,12 @@ public class MainActivity extends AppCompatActivity {
                 if (!MainActivity.movieList.isEmpty() && selectedPosition == MainActivity.spinnerSelectedPosition) {
                     loadingIndicator.setVisibility(View.GONE);
 //                    movieRecyclerView.setSelection(scrollIndex);
+                    populateMovies();
                     return;
                 }
                 if (selectedPosition == 0) {
                     selectedOption = getString(R.string.settings_sort_by_most_popular_value);
                     new MovieAsyncTask().execute(selectedOption);
-
-//                    /* Clear the GridView as a new query will be kicked off */
-//                    movieAdapter.clear();
-//
-//                    /* Hide the empty state text view as the loading indicator will be displayed */
-//                    emptyTextView.setVisibility(View.GONE);
-//
-//                    /* Show the loading indicator while new date is being fetched */
-//                    loadingIndicator.setVisibility(View.VISIBLE);
-//
-//                    /* Restart the loader to query again The MovieDB as the query settings have been updated */
-//                    getLoaderManager().restartLoader(MOVIE_LOADER_ID, null, MainActivity.this);
                 } else if (selectedPosition == 1) {
                     selectedOption = getString(R.string.settings_sort_by_top_rated_value);
                     new MovieAsyncTask().execute(selectedOption);
@@ -426,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "Updating list of tasks from LiveData in ViewModel");
 
                 /* Load all favorite movies from the database */
-                appDatabase.movieDao().loadAllFavoriteMovies();
+                LiveData<List<Movie>> favoriteMovies = appDatabase.movieDao().loadAllFavoriteMovies();
 
                 /* Get the AppExecutors and check if there are movies saved in the Favorites */
                 AppExecutors.getExecutors().diskIO().execute(new Runnable() {
@@ -440,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
 //                                    movieAdapter.clear();
-                                    movieAdapter.notifyDataSetChanged();
+//                                    movieAdapter.notifyDataSetChanged();
                                     loadingIndicator.setVisibility(View.GONE);
                                     emptyTextView.setText(R.string.no_favorite_movies);
                                 }
@@ -453,10 +453,11 @@ public class MainActivity extends AppCompatActivity {
                                 public void run() {
                                     /* Clear the GridView as a new query will be kicked off */
 //                                    movieAdapter.clear();
-                                    movieAdapter.notifyDataSetChanged();
+//                                    movieAdapter.notifyDataSetChanged();
 
                                     /* Hide the empty state text view as the loading indicator will
                                     be displayed */
+                                    movieList.clear();
                                     emptyTextView.setVisibility(View.GONE);
 
                                     /* Show the loading indicator while new date is being fetched,
@@ -464,12 +465,14 @@ public class MainActivity extends AppCompatActivity {
                                     after adding all the movies to the adapter, hide the loading
                                     indicator */
                                     loadingIndicator.setVisibility(View.VISIBLE);
-                                    movieAdapter.notifyDataSetChanged();
-                                    if (movies != null) {
-                                        movieAdapter.notifyDataSetChanged();
-//                                        movieAdapter.addAll(movies);
-                                    }
+                                    movieRecyclerView.setAdapter(movieAdapter);
                                     loadingIndicator.setVisibility(View.GONE);
+//                                    movieAdapter.notifyDataSetChanged();
+//                                    if (movies != null) {
+//                                        movieAdapter.notifyDataSetChanged();
+////                                        movieAdapter.addAll(movies);
+//                                    }
+//                                    loadingIndicator.setVisibility(View.GONE);
                                 }
                             });
                         }
