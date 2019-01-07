@@ -128,20 +128,22 @@ public class MainActivity extends AppCompatActivity {
      */
     private RecyclerView movieRecyclerView;
 
+    private RecyclerView.LayoutManager layoutManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         emptyTextView = findViewById(R.id.empty_text_view);
-
         movieRecyclerView = findViewById(R.id.movies_recycler_view);
 
         /* Create a new TrailerAdapter and ReviewAdapter */
         movieAdapter = new MovieAdapter(movieList);
 
         /* Set a new LinearLayoutManager to the trailerRecyclerView and reviewRecyclerView*/
-        movieRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        movieRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
         /* Set the adapters to the RecyclerViews */
         movieRecyclerView.setAdapter(movieAdapter);
@@ -190,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             if (movieList == null) {
                 movieList = new ArrayList<>();
-                populateMovies();
 //                initializeLoader();
             }
         }
@@ -214,8 +215,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void populateMovies() {
         movieAdapter = new MovieAdapter(movieList);
-        movieRecyclerView.setVisibility(View.VISIBLE);
         movieRecyclerView.setAdapter(movieAdapter);
+        movieRecyclerView.setVisibility(View.VISIBLE);
         emptyTextView.setVisibility(View.GONE);
         movieRecyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
     }
@@ -228,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
          * an empty list of movies an input and set the adapter on the GridView,
          * so the grid can be populated in the user interface. */
 
-//        final Context context = getBaseContext();
+        final Context context = getBaseContext();
 
 //        /* Scroll to the position saved in the onSaveInstanceState */
 //        scrollView.scrollTo(scrollX, scrollY);
@@ -284,6 +285,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!MainActivity.movieList.isEmpty() && selectedPosition == MainActivity.spinnerSelectedPosition) {
                     loadingIndicator.setVisibility(View.GONE);
+                    movieRecyclerView.setVisibility(View.VISIBLE);
 //                    movieRecyclerView.setSelection(scrollIndex);
                     return;
                 }
@@ -340,8 +342,6 @@ public class MainActivity extends AppCompatActivity {
      * Returns a list of reviews.
      */
     private class MovieAsyncTask extends AsyncTask<String, Void, List<Movie>> {
-
-        String movieUrl = null;
 
         @Override
         protected List<Movie> doInBackground(String... strings) {

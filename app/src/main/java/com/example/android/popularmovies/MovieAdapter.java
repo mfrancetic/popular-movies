@@ -24,7 +24,6 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-
         final ImageView moviePosterImageView;
 
         ViewHolder(@NonNull View itemView) {
