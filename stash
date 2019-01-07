@@ -1,0 +1,88 @@
+[1mdiff --git a/app/src/main/java/com/example/android/popularmovies/MainActivity.java b/app/src/main/java/com/example/android/popularmovies/MainActivity.java[m
+[1mindex 2b93f81..cd95240 100644[m
+[1m--- a/app/src/main/java/com/example/android/popularmovies/MainActivity.java[m
+[1m+++ b/app/src/main/java/com/example/android/popularmovies/MainActivity.java[m
+[36m@@ -195,12 +195,13 @@[m [mpublic class MainActivity extends AppCompatActivity[m
+         emptyTextView = findViewById(R.id.empty_text_view);[m
+         movieGridView.setEmptyView(emptyTextView);[m
+         loadingIndicator = findViewById(R.id.loading_indicator);[m
+[32m+[m[32m//        if (movieAdapter == null && spinnerSelectedPosition != selectedPosition) {[m
+         if (movieAdapter == null) {[m
+             movieAdapter = new MovieAdapter(this, movieList);[m
+[31m-            movieAdapter.addAll(movieList);[m
+[31m-        } else {[m
+[31m-            movieAdapter.clear();[m
+ //            movieAdapter.addAll(movieList);[m
+[32m+[m[32m        } else {[m
+[32m+[m[32m//            movieAdapter.clear();[m
+[32m+[m[32m            movieAdapter.addAll(movieList);[m
+         }[m
+ [m
+         movieGridView.setAdapter(movieAdapter);[m
+[36m@@ -412,13 +413,19 @@[m [mpublic class MainActivity extends AppCompatActivity[m
+     @Override[m
+     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> movies) {[m
+ [m
+[32m+[m
+         if (spinnerSelectedPosition == 2) {[m
+             movieGridView.setSelection(scrollIndex);[m
+             return;[m
+[32m+[m[32m        }[m
+ //        } else if (movies.size() == 0 && movieList.size() != 0) {[m
+ //            return;[m
+[31m-            [m
+[31m-        } else {[m
+[32m+[m
+[32m+[m[32m//            if (movies != null && movieList != null) {[m
+[32m+[m[32m//                if (movies.size() == 0 && movieList.size() != 0) {[m
+[32m+[m[32m//                    return;[m
+[32m+[m[32m//                }[m
+[32m+[m[32m        else {[m
+             /* Hide loading indicator because the data has been loaded */[m
+             View loadingIndicator = findViewById(R.id.loading_indicator);[m
+             loadingIndicator.setVisibility(View.GONE);[m
+[36m@@ -426,23 +433,26 @@[m [mpublic class MainActivity extends AppCompatActivity[m
+ [m
+             /* If there is a valid list of movies, then add them to the adapter's data set.[m
+             This will trigger the GridView to update */[m
+[31m-            if (movies != null && !movies.isEmpty()) {[m
+[31m-                movieAdapter.addAll(movies);[m
+[31m-            } else {[m
+[31m-                /* Set empty state text to display "No movies found." */[m
+[31m-                emptyTextView.setText(R.string.no_movies_found);[m
+[31m-                /* Clear the adapter of previous movie data */[m
+[32m+[m[32m            if (movies != null && !movies.isEmpty())[m
+[32m+[m[32m            {[m
+[32m+[m[32m        movieAdapter.addAll(movies);[m
+[32m+[m[32m    } else[m
+[32m+[m
+[32m+[m[32m    {[m
+[32m+[m[32m        /* Set empty state text to display "No movies found." */[m
+[32m+[m[32m        emptyTextView.setText(R.string.no_movies_found);[m
+[32m+[m[32m        /* Clear the adapter of previous movie data */[m
+ //                movieAdapter.clear();[m
+[31m-            }[m
+[31m-        }[m
+[31m-        movieGridView.setSelection(scrollIndex);[m
+     }[m
+[32m+[m[32m}[m
+[32m+[m[32m        movieGridView.setSelection(scrollIndex);[m
+[32m+[m[32m                }[m
+ [m
+[31m-    /**[m
+[31m-     * Loader reset, so we can clear out our existing data[m
+[31m-     */[m
+[31m-    @Override[m
+[31m-    public void onLoaderReset(Loader<List<Movie>> loader) {[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Loader reset, so we can clear out our existing data[m
+[32m+[m[32m */[m
+[32m+[m[32m@Override[m
+[32m+[m[32mpublic void onLoaderReset(Loader<List<Movie>>loader){[m
+         movieAdapter.clear();[m
+[31m-    }[m
+[31m-}[m
+\ No newline at end of file[m
+[32m+[m[32m        }[m
+[32m+[m[32m        }[m
+\ No newline at end of file[m
