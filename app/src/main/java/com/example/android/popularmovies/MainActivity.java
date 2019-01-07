@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
         emptyTextView = findViewById(R.id.empty_text_view);
         movieRecyclerView = findViewById(R.id.movies_recycler_view);
+        loadingIndicator = findViewById(R.id.loading_indicator);
 
         /* Create a new TrailerAdapter and ReviewAdapter */
         movieAdapter = new MovieAdapter(movieList);
@@ -218,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
         movieRecyclerView.setAdapter(movieAdapter);
         movieRecyclerView.setVisibility(View.VISIBLE);
         emptyTextView.setVisibility(View.GONE);
+        loadingIndicator.setVisibility(View.GONE);
         movieRecyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
     }
 
@@ -251,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
             new MovieAsyncTask().execute(selectedOption);
         } else if (movieList.size() == 0) {
             emptyTextView.setText(R.string.no_movies_found);
+            loadingIndicator.setVisibility(View.GONE);
         } else {
             populateMovies();
         }
@@ -285,7 +288,6 @@ public class MainActivity extends AppCompatActivity {
 
                 if (!MainActivity.movieList.isEmpty() && selectedPosition == MainActivity.spinnerSelectedPosition) {
                     loadingIndicator.setVisibility(View.GONE);
-                    movieRecyclerView.setVisibility(View.VISIBLE);
 //                    movieRecyclerView.setSelection(scrollIndex);
                     return;
                 }
@@ -406,6 +408,7 @@ public class MainActivity extends AppCompatActivity {
             if (movies.size() == 0) {
                 movieRecyclerView.setVisibility(View.GONE);
                 emptyTextView.setText(getString(R.string.no_movies_found));
+                loadingIndicator.setVisibility(View.GONE);
             } else {
                 populateMovies();
             }
