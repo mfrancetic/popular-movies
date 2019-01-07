@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -114,6 +115,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private static final String API_KEY = "api_key";
 
+    private static final String SPAN_COUNT = "spanCount";
+
+    private int spanCount;
+
     /**
      * Current scrolling position
      */
@@ -144,8 +149,13 @@ public class MainActivity extends AppCompatActivity {
         /* Create a new TrailerAdapter and ReviewAdapter */
         movieAdapter = new MovieAdapter(movieList);
 
-        /* Set a new LinearLayoutManager to the trailerRecyclerView and reviewRecyclerView*/
-        movieRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        spanCount = 3; }
+        else {
+            spanCount = 2;
+        }
+            /* Set a new LinearLayoutManager to the trailerRecyclerView and reviewRecyclerView*/
+        movieRecyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
 
         /* Set the adapters to the RecyclerViews */
         movieRecyclerView.setAdapter(movieAdapter);
@@ -231,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
         movieRecyclerView.setVisibility(View.VISIBLE);
         emptyTextView.setVisibility(View.GONE);
         loadingIndicator.setVisibility(View.GONE);
-        movieRecyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 2));
+        movieRecyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, spanCount));
         if (savedRecyclerViewState != null) {
             movieRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerViewState);
         }
