@@ -35,12 +35,12 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
     /**
      * List of trailers
      */
-    private final List<Movie> movies;
+    private  List<Movie> movies;
 
     /**
      * URL for the movie poster from The MovieDB
      */
-    private static final String BASE_POSTER_URL = "http://image.tmdb.org/t/p/";
+    private static final String BASE_POSTER_URL = "https://image.tmdb.org/t/p/";
 
 
     private static final String CURRENT_MOVIE = "currentMovie";
@@ -51,9 +51,16 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
     private static final String posterSize = "w185";
 
 
-    public MovieAdapter(List<Movie> movies) {
+  /*  public MovieAdapter(List<Movie> movies) {
         this.movies = movies;
-    }
+    }*/
+
+  public void setMovieList(List<Movie> movies){
+      this.movies = movies;
+      notifyDataSetChanged();
+
+  }
+
 
     @NonNull
     @Override
