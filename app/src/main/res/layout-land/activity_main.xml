@@ -23,7 +23,7 @@
             android:layout_below="@id/spinner"
             android:focusableInTouchMode="false"
             android:horizontalSpacing="0dp"
-            android:numColumns="3"
+            android:numColumns="2"
             android:stretchMode="columnWidth"
             android:verticalSpacing="0dp" />
 
@@ -32,8 +32,9 @@
             android:id="@+id/empty_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/spinner"
             android:layout_centerHorizontal="true"
-            android:paddingTop="100sp"
+            android:paddingTop="@dimen/padding_landscape"
             android:textSize="@dimen/title_text_size"
             tools:text="@string/no_movies_found" />
 
@@ -42,6 +43,6 @@
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="100sp" />
+            android:padding="@dimen/padding_landscape" />
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

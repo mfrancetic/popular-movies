@@ -14,9 +14,6 @@
     <!-- Content description of the play trailer button [CHAR LIMIT=30] -->
     <string name="play_trailer_button">Play trailer button</string>
 
-    <!-- Error message that appears when there is no internet connectivity [CHAR LIMIT=NONE] -->
-    <string name="no_internet_connection">No internet connection</string>
-
     <!-- Text to display in the grid when there are no movies [CHAR LIMIT=NONE]-->
     <string name="no_movies_found">No movies found</string>
 

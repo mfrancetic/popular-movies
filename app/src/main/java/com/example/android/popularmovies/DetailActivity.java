@@ -138,11 +138,6 @@ public class DetailActivity extends AppCompatActivity {
     private RecyclerView trailerRecyclerView;
 
     /**
-     * Spinner selected position from the MainActivity
-     */
-    private int spinnerSelectedPositionFromIntent;
-
-    /**
      * Adapter for reviews
      */
     private ReviewAdapter reviewAdapter;
@@ -179,10 +174,6 @@ public class DetailActivity extends AppCompatActivity {
 
         /* Get instance of the AppDatabase using the app context */
         database = AppDatabase.getInstance(getApplicationContext());
-
-//        if (getIntent() != null) {
-//            spinnerSelectedPositionFromIntent = getIntent().getIntExtra(MainActivity.SPINNER_SELECTED_POSITION, 0);
-//        }
 
         /* Check if the savedInstanceState exists, and contains the key CURRENT_MOVIE.
          * If so, get the parcelable under that key value from the savedInstanceState,
@@ -234,7 +225,6 @@ public class DetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(DetailActivity.this, MainActivity.class);
-//        intent.putExtra(MainActivity.SPINNER_SELECTED_POSITION, spinnerSelectedPositionFromIntent);
         startActivity(intent);
         finish();
     }
@@ -444,7 +434,6 @@ public class DetailActivity extends AppCompatActivity {
      * Populates the UI with details of the selected movie
      */
     private void generateUI() {
-
         /* Get BaseContext and store it a Context variable */
         final Context context = getBaseContext();
 

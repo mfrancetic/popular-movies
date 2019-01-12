@@ -31,13 +31,14 @@ final class QueryUtils {
      * URL for the reviews from The MovieDB
      */
     static final String REVIEW_QUERY = "reviews";
+
     /**
      * Tag for the log messages
      */
     private static final String TAG = QueryUtils.class.getSimpleName();
 
     /**
-     * Create a private constructor QueryUtils.
+     * Create a private constructor QueryUtils
      */
     private QueryUtils() {
     }
@@ -75,9 +76,7 @@ final class QueryUtils {
         String API_PARAM = "api_key";
 
         URL url = null;
-
         Uri baseUri = Uri.parse(BASE_URL);
-
         Uri.Builder uriBuilder = baseUri.buildUpon();
         uriBuilder.appendEncodedPath(selectedOption)
                 .appendQueryParameter(API_PARAM, MainActivity.apiKey)

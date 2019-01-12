@@ -20,8 +20,8 @@
             android:id="@+id/movies_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:focusableInTouchMode="false"
             android:layout_below="@id/spinner"
+            android:focusableInTouchMode="false"
             android:horizontalSpacing="0dp"
             android:numColumns="2"
             android:stretchMode="columnWidth"
@@ -33,17 +33,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/spinner"
-            android:paddingTop="100sp"
             android:layout_centerHorizontal="true"
-            tools:text="@string/no_movies_found"
-            android:textSize="@dimen/title_text_size" />
+            android:paddingTop="@dimen/padding_portrait"
+            android:textSize="@dimen/title_text_size"
+            tools:text="@string/no_movies_found" />
 
         <ProgressBar
             android:id="@+id/loading_indicator"
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="100sp"
-            />
+            android:padding="@dimen/padding_portrait" />
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

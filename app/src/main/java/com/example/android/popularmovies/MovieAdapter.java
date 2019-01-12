@@ -86,7 +86,7 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
             com.squareup.picasso.Picasso
                     .get()
                     .load(fullPosterPathUri)
-                    .centerInside().resize(width / 3, height)
+                    .centerInside().resize(width / 2, height)
                     .into(moviePosterImageView);
         } else {
             com.squareup.picasso.Picasso
@@ -103,7 +103,6 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra(CURRENT_MOVIE, movie);
-//                intent.putExtra(MainActivity.SPINNER_SELECTED_POSITION, MainActivity.selectedPosition);
                 context.startActivity(intent);
             }
         });
