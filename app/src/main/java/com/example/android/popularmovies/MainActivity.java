@@ -47,16 +47,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-
     /**
      * Generated value of the API key
      */
     public static final String apiKey = "f23c3ad9ff6e93efec4c6716b2d44d35";
 
-    /**
-     * Constant value for the movie loader ID
-     */
-    private static final int MOVIE_LOADER_ID = 1;
     private static final String LIST_STATE = "LIST_STATE";
 
     /**
@@ -82,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * SelectedPosition integer
      */
-    private int selectedPosition;
+    public static int selectedPosition;
 
     /**
      * Selected position of the spinner
@@ -92,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Key of the spinner selected position
      */
-    private static final String SPINNER_SELECTED_POSITION = "spinnerSelectedPosition";
+    public static final String SPINNER_SELECTED_POSITION = "spinnerSelectedPosition";
 
     /**
      * database AppDatabase object
@@ -109,18 +104,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private final String MOVIE_LIST = "movieList";
 
-    /**
-     * Key of the current movie
-     */
-    private static final String CURRENT_MOVIE = "currentMovie";
-
-    /**
-     * Api-key string
-     */
-    private static final String API_KEY = "api_key";
-
-    private static final String SPAN_COUNT = "spanCount";
-
     private int spanCount;
 
     /**
@@ -128,11 +111,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private Parcelable savedRecyclerViewState;
     private Parcelable savedRecyclerViewState1;
-
-    /**
-     * Key of the scrollIndex
-     */
-    private static final String RECYCLER_VIEW_BUNDLE = "recyclerViewBundle";
 
     /**
      * GridView
@@ -144,21 +122,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private NestedScrollView scrollView;
 
-
-
-    private static final String SCROLL_POSITION_Y = "scrollPositionY";
-
-    private int scrollY;
-
     private GridLayoutManager mLayoutManager;
 
-
-
-    private int scrollIndex;
     private boolean changeSpinner = true;
     private Spinner spinner;
     private int mScrollPosition;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,17 +134,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         movieList = new ArrayList<>();
 
-
         emptyTextView = findViewById(R.id.empty_text_view);
         movieRecyclerView = findViewById(R.id.movies_recycler_view);
         loadingIndicator = findViewById(R.id.loading_indicator);
         scrollView = findViewById(R.id.main_scroll_view);
 
-//        movieRecyclerView.setNestedScrollingEnabled(false);
         movieRecyclerView.setFocusable(false);
         scrollView.requestFocus();
 
-        /* Create a new TrailerAdapter and ReviewAdapter */
+        /* Create a new MovieAdapter */
         movieAdapter = new MovieAdapter();
         movieAdapter.setMovieList(movieList);
 
@@ -185,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             spanCount = 2;
         }
+
         /* Set a new LinearLayoutManager to the trailerRecyclerView and reviewRecyclerView*/
         movieRecyclerView.setLayoutManager(new GridLayoutManager(this, spanCount));
         mLayoutManager = new GridLayoutManager(this, spanCount);
@@ -199,20 +166,19 @@ public class MainActivity extends AppCompatActivity {
         if (selectedOption == null) {
             selectedOption = getString(R.string.settings_sort_by_most_popular_value);
         }
+        if (getIntent() != null) {
+            selectedPosition = getIntent().getIntExtra(SPINNER_SELECTED_POSITION, 0);
+
+        }
 
         /* Check if the savedInstanceState exists, and contains the key "movieList".
          * If so, get the values under their keys from the savedInstanceState,
          * if not, create a new ArrayList and initialize the loader. */
-
-
         generateRecyclerView();
         if (savedInstanceState == null) {
             generateSpinner(0);
             if (movieList == null) {
-
-//                initializeLoader();
-                Log.i("TAG"," onCreate IF "+(savedRecyclerViewState1 != null) +" "+(savedInstanceState == null));
-
+                Log.i("TAG", " onCreate IF " + (savedRecyclerViewState1 != null) + " " + (savedInstanceState == null));
                 new MovieAsyncTask().execute(selectedOption);
             }
         } else {
@@ -221,19 +187,8 @@ public class MainActivity extends AppCompatActivity {
             generateSpinner(spinnerSelectedPosition);
             savedRecyclerViewState1 = savedInstanceState.getParcelable(LIST_STATE);
             movieRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerViewState1);
-
-            Log.i("TAG"," onCreate changeSpinner" +changeSpinner +" "+savedInstanceState.getInt(SPINNER_SELECTED_POSITION));
-           // restorePosition();
-           // Log.i("TAG"," onCreate ELSE "+(savedRecyclerViewState1 != null) +" "+(savedInstanceState == null) +" " +savedInstanceState.getParcelableArrayList(MOVIE_LIST));
-
-          //  scrollY = savedInstanceState.getInt(SCROLL_POSITION_Y);
-           // savedRecyclerViewState = savedInstanceState.getParcelable(RECYCLER_VIEW_BUNDLE);
-
-//            savedRecyclerViewState = savedInstanceState.getParcelable(RECYCLER_VIEW_BUNDLE);
-//            movieRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerViewState);
+            Log.i("TAG", " onCreate changeSpinner" + changeSpinner + " " + savedInstanceState.getInt(SPINNER_SELECTED_POSITION));
         }
-
-
     }
 
     /**
@@ -244,111 +199,61 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         selectedPosition = spinnerSelectedPosition;
-//        if (savedRecyclerViewState1!=null){
-//            Log.i("TAG"," ON RESUME"+(savedRecyclerViewState1!=null));
-//            mLayoutManager.onRestoreInstanceState(savedRecyclerViewState1);
-//
-//        }
-
-
         if (spinnerSelectedPosition == 2) {
             loadFavorites();
-        }else{
-
         }
     }
 
     /**
      * Store the values under their keys to the savedInstanceState bundle
      */
-//    @Override
-//    protected void onSaveInstanceState(Bundle savedInstanceState) {
-//        savedInstanceState.putInt(SPINNER_SELECTED_POSITION, selectedPosition);
-//        savedInstanceState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
-////        savedInstanceState.putParcelable(RECYCLER_VIEW_BUNDLE, movieRecyclerView.getLayoutManager().onSaveInstanceState());
-//        scrollY = scrollView.getScrollY();
-//        savedInstanceState.putInt(SCROLL_POSITION_Y, scrollY);
-//
-//        savedRecyclerViewState = mLayoutManager.onSaveInstanceState();
-//        savedInstanceState.putParcelable(RECYCLER_VIEW_BUNDLE, savedRecyclerViewState);
-//
-//        super.onSaveInstanceState(savedInstanceState);
-//    }
-
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         RecyclerView.LayoutManager layoutManager = movieRecyclerView.getLayoutManager();
         savedRecyclerViewState1 = movieRecyclerView.getLayoutManager().onSaveInstanceState();
-        if(layoutManager != null && layoutManager instanceof LinearLayoutManager){
+        if (layoutManager != null && layoutManager instanceof LinearLayoutManager) {
             mScrollPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
         }
-
-//        SavedState newState = SavedState(outState);
-//        newState.mScrollPosition = mScrollPosition;
         outState.putParcelable(LIST_STATE, savedRecyclerViewState1);
         outState.putInt(SPINNER_SELECTED_POSITION, selectedPosition);
-        outState.putInt("ItemSelect",spinner.getSelectedItemPosition());
+        outState.putInt("ItemSelect", spinner.getSelectedItemPosition());
         outState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
-//        Log.i("TAG","  "+test );
-        Log.i("TAG"," onSaveInstanceState "+(savedRecyclerViewState1 != null) +"  "+ movieList.size());
-
-
     }
-
-
-
-
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-
         if (savedInstanceState != null) {
-            Log.i("TAG"," onRestoreInstanceState "+(savedRecyclerViewState1 != null));
+            Log.i("TAG", " onRestoreInstanceState " + (savedRecyclerViewState1 != null));
             movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
             spinnerSelectedPosition = savedInstanceState.getInt(SPINNER_SELECTED_POSITION);
             savedRecyclerViewState1 = savedInstanceState.getParcelable(LIST_STATE);
-
-
-            Log.i("TAG"," onRestoreInstanceState "+(savedRecyclerViewState1 != null));
         }
     }
 
-
-
     private void restorePosition() {
-        Log.i("TAG"," restorePosition "+(savedRecyclerViewState1 != null));
-
-       // savedRecyclerViewState1 = movieRecyclerView.getLayoutManager().onSaveInstanceState();
-
-
-
+        Log.i("TAG", " restorePosition " + (savedRecyclerViewState1 != null));
 
         if (savedRecyclerViewState1 != null) {
-            Log.i("TAG"," savedRecyclerViewState "+(savedRecyclerViewState1 != null));
+            Log.i("TAG", " savedRecyclerViewState " + (savedRecyclerViewState1 != null));
             movieRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerViewState1);
-
             savedRecyclerViewState = null;
         }
     }
+
     /**
      * Populate the trailers of the current movie
      */
     private void populateMovies(List<Movie> movies) {
-        Log.i("TAG"," populateMovies "+(savedRecyclerViewState1 != null));
-        this.movieList=movies;
-
+        Log.i("TAG", " populateMovies " + (savedRecyclerViewState1 != null));
+        this.movieList = movies;
         movieAdapter.setMovieList(movieList);
         restorePosition();
-       // movieRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerViewState1);
-      // restorePosition();
         movieRecyclerView.setVisibility(View.VISIBLE);
         emptyTextView.setVisibility(View.GONE);
         loadingIndicator.setVisibility(View.GONE);
-//        scrollView.scrollTo(0,scrollY);
     }
 
     /**
@@ -358,15 +263,10 @@ public class MainActivity extends AppCompatActivity {
         /* Find a reference to the GridView in the layout, create a new adapter that takes
          * an empty list of movies an input and set the adapter on the GridView,
          * so the grid can be populated in the user interface. */
-        Log.i("TAG"," generateRecyclerView "+(savedRecyclerViewState1 != null));
-        final Context context = getBaseContext();
+        Log.i("TAG", " generateRecyclerView " + (savedRecyclerViewState1 != null));
 
-//        if (savedRecyclerViewState != null) {
-//            movieRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerViewState);
-//        }
-
-        if (movieList == null) { Log.i("TAG"," generateRecyclerView movieList "+(movieList == null));
-
+        if (movieList == null) {
+            Log.i("TAG", " generateRecyclerView movieList " + (movieList == null));
             new MovieAsyncTask().execute(selectedOption);
         } else if (movieList.size() == 0) {
             emptyTextView.setText(R.string.no_movies_found);
@@ -380,8 +280,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Generate the Spinner, which enables sorting between most popular and top rated movies
      */
-    private void generateSpinner(int selected ) {
-        Log.i("TAG"," generateSpinner "+(savedRecyclerViewState1 != null));
+    private void generateSpinner(int selected) {
+        Log.i("TAG", " generateSpinner " + (savedRecyclerViewState1 != null));
         spinner = findViewById(R.id.spinner);
 
         /* Create a new ArrayAdapter, set the DropDownViewResource and set the adapter to the spinner */
@@ -390,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
 
         spinnerAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
-
         spinner.setSelection(selected);
 
         /* Set the OnItemSelectedListener on the Spinner */
@@ -401,50 +300,36 @@ public class MainActivity extends AppCompatActivity {
                  * of the popular or top_rated key, or load the Favorites from the database */
 
                 selectedPosition = parent.getSelectedItemPosition();
-                Log.i("TAG"," selectedOption "+position  +" "+selectedPosition +"   "+(view != null));
-//                if (movieList==null)
-//                    movieList=new ArrayList<>();
+                Log.i("TAG", " selectedOption " + position + " " + selectedPosition + "   " + (view != null));
 
-                if (view == null){
+                 if (!movieList.isEmpty() && selectedPosition == MainActivity.spinnerSelectedPosition) {
+                     loadingIndicator.setVisibility(View.GONE);
+                     return;
+                 }
+                if (view == null) {
                     populateMovies(movieList);
-                    //restorePosition();
-
-
-                    return;
-                }
-                else  {
-
+                } else {
                     if (selectedPosition == 0) {
-
-                    selectedOption = getString(R.string.settings_sort_by_most_popular_value);
-
-                    Log.i("TAG"," selectedOption "+selectedOption +" "+(savedRecyclerViewState1 != null) );
-                    new MovieAsyncTask().execute(selectedOption);
-
-                } else if (selectedPosition == 1) {
-                    Log.i("TAG"," selectedOption "+selectedOption );
-                    selectedOption = getString(R.string.settings_sort_by_top_rated_value);
-                    new MovieAsyncTask().execute(selectedOption);
-
-                } else if (selectedPosition == 2) {
-                    /* if the selectedPosition is 2, call the method loadFavorites to load all the
-                     * favorite movies from the local database */
-                    loadFavorites();
+                        selectedOption = getString(R.string.settings_sort_by_most_popular_value);
+                        new MovieAsyncTask().execute(selectedOption);
+                    } else if (selectedPosition == 1) {
+                        Log.i("TAG", " selectedOption " + selectedOption);
+                        selectedOption = getString(R.string.settings_sort_by_top_rated_value);
+                        new MovieAsyncTask().execute(selectedOption);
+                    } else if (selectedPosition == 2) {
+                        /* if the selectedPosition is 2, call the method loadFavorites to load all the
+                         * favorite movies from the local database */
+                        loadFavorites();
+                    }
+                    MainActivity.spinnerSelectedPosition = selectedPosition;
                 }
-
-                MainActivity.spinnerSelectedPosition = selectedPosition;
-
             }
 
-                }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
     }
-
-
 
 
     /**
@@ -456,9 +341,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected List<Movie> doInBackground(String... strings) {
-
-//            int id = currentMovie.getMovieId();
-            List <Movie> movieList1 = new ArrayList<>();
+            List<Movie> movieList1 = new ArrayList<>();
 
             try {
                 URL url = QueryUtils.createMovieUrl(selectedOption);
@@ -519,11 +402,9 @@ public class MainActivity extends AppCompatActivity {
                 emptyTextView.setText(getString(R.string.no_movies_found));
                 loadingIndicator.setVisibility(View.GONE);
             } else {
-                Log.i("TAG"," onPostExecute "+(savedRecyclerViewState1 != null));
-
+                Log.i("TAG", " onPostExecute " + (savedRecyclerViewState1 != null));
                 populateMovies(movies);
             }
-
         }
     }
 
@@ -531,14 +412,29 @@ public class MainActivity extends AppCompatActivity {
      * Load the favorite movies saved in the local database, using the ViewModel and Observer
      */
     private void loadFavorites() {
-        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+//        if (spinnerSelectedPosition != 2) {
+//            return;
+//        }
+
+
+//        if (selectedPosition != 2) {
+//            return;
+//        }
+
+            MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+
             @Override
             public void onChanged(@Nullable final List<Movie> movies) {
                 Log.d(LOG_TAG, "Updating list of tasks from LiveData in ViewModel");
 
+                if (selectedPosition != 2) {
+                    return;
+                }
+
                 /* Load all favorite movies from the database */
-                LiveData<List<Movie>> favoriteMovies = appDatabase.movieDao().loadAllFavoriteMovies();
+                appDatabase.movieDao().loadAllFavoriteMovies();
 
                 /* Get the AppExecutors and check if there are movies saved in the Favorites */
                 AppExecutors.getExecutors().diskIO().execute(new Runnable() {
@@ -547,16 +443,20 @@ public class MainActivity extends AppCompatActivity {
                         final int numberOfMovies = appDatabase.movieDao().getMovieCount();
                         /* In case the numberOfMovies is smaller than 1, inform the user that there
                          * are no movies in the Favorites list */
-                        if (numberOfMovies < 1) {
+
+                        if (numberOfMovies == 0) {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+//                                    movieList = movies;
+                                    movieRecyclerView.setVisibility(View.GONE);
                                     loadingIndicator.setVisibility(View.GONE);
+                                    emptyTextView.setVisibility(View.VISIBLE);
                                     emptyTextView.setText(R.string.no_favorite_movies);
                                 }
                             });
                         } else {
-                            /* If there are movies in the Favorites list, populate the UI with their
+                         /* If there are movies in the Favorites list, populate the UI with their
                             movie posters */
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -565,7 +465,7 @@ public class MainActivity extends AppCompatActivity {
                                     be displayed */
                                     movieList = movies;
                                     movieAdapter.notifyDataSetChanged();
-                                    Log.i("TAG"," runOnUiThread "+(savedRecyclerViewState1 != null));
+                                    Log.i("TAG", " runOnUiThread " + (savedRecyclerViewState1 != null));
                                     populateMovies(movieList);
                                     emptyTextView.setVisibility(View.GONE);
 
@@ -578,13 +478,10 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
                         }
+
                     }
                 });
             }
         });
     }
-
-
-
-
 }

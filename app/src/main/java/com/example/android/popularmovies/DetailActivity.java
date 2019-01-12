@@ -58,11 +58,6 @@ public class DetailActivity extends AppCompatActivity {
     private ImageButton addToFavoritesButton;
 
     /**
-     * TextView displaying the label for the review
-     */
-    private TextView reviewLabelTextView;
-
-    /**
      * TextView that is displayed when the trailer list is empty
      */
     private TextView emptyTrailerTextView;
@@ -81,11 +76,6 @@ public class DetailActivity extends AppCompatActivity {
      * Trailer list
      */
     private List<Trailer> trailers;
-
-    /**
-     * TextView displaying the the label for the trailer
-     */
-    private TextView trailerLabelTextView;
 
     /**
      * viewModel AddMovieViewModel object
@@ -148,6 +138,11 @@ public class DetailActivity extends AppCompatActivity {
     private RecyclerView trailerRecyclerView;
 
     /**
+     * Spinner selected position from the MainActivity
+     */
+    private int spinnerSelectedPositionFromIntent;
+
+    /**
      * Adapter for reviews
      */
     private ReviewAdapter reviewAdapter;
@@ -166,8 +161,6 @@ public class DetailActivity extends AppCompatActivity {
         addToFavoritesButton = findViewById(R.id.favorites_button);
         reviewRecyclerView = findViewById(R.id.reviews_recycler_view);
         trailerRecyclerView = findViewById(R.id.trailers_recycler_view);
-        reviewLabelTextView = findViewById(R.id.review_label);
-        trailerLabelTextView = findViewById(R.id.trailer_label);
         scrollView = findViewById(R.id.scroll_view);
         emptyReviewTextView = findViewById(R.id.empty_review_view);
         emptyTrailerTextView = findViewById(R.id.empty_trailer_view);
@@ -186,6 +179,10 @@ public class DetailActivity extends AppCompatActivity {
 
         /* Get instance of the AppDatabase using the app context */
         database = AppDatabase.getInstance(getApplicationContext());
+
+//        if (getIntent() != null) {
+//            spinnerSelectedPositionFromIntent = getIntent().getIntExtra(MainActivity.SPINNER_SELECTED_POSITION, 0);
+//        }
 
         /* Check if the savedInstanceState exists, and contains the key CURRENT_MOVIE.
          * If so, get the parcelable under that key value from the savedInstanceState,
@@ -237,6 +234,7 @@ public class DetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(DetailActivity.this, MainActivity.class);
+//        intent.putExtra(MainActivity.SPINNER_SELECTED_POSITION, spinnerSelectedPositionFromIntent);
         startActivity(intent);
         finish();
     }

@@ -1,12 +1,7 @@
 package com.example.android.popularmovies;
 
 import android.net.Uri;
-import android.text.TextUtils;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,8 +11,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Helper methods related to requesting and receiving movie data from The MovieDB.
@@ -27,12 +20,7 @@ final class QueryUtils {
     /**
      * URL for the review from The MovieDB
      */
-    private static final String BASE_TRAILERS_REVIEWS_URL = "https://api.themoviedb.org/3/movie/";
-
-    /**
-     * URL for the movie data from The MovieDB database
-     */
-    private static final String MOVIES_BASE_URL = "http://api.themoviedb.org/3/movie/";
+    private static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
 
     /**
      * URL for the trailers from The MovieDB
@@ -54,39 +42,6 @@ final class QueryUtils {
     private QueryUtils() {
     }
 
-//    /**
-//     * Query The MovieDB data set and return a list of Movie objects.
-//     */
-//    static List<Movie> fetchMovieData(String requestUrl) {
-//
-//        /* Create an URL object */
-//        URL url = createUrl(requestUrl);
-//
-//        /* Perform an HTTP request to the URL and receive a JSON response back */
-//        String jsonResponse = null;
-//
-//        try {
-//            jsonResponse = makeHttpRequest(url);
-//        } catch (IOException e) {
-//            Log.e(TAG, "Problem making the HTTP request", e);
-//        }
-//        /* Extract relevant fields from the JSON response and create a list of Movies */
-//        return extractFeatureFromJson(jsonResponse);
-//    }
-
-//    /**
-//     * Returns new URL object from the given string URL.
-//     */
-//    private static URL createUrl(String stringUrl) {
-//        URL url = null;
-//        try {
-//            url = new URL(stringUrl);
-//        } catch (MalformedURLException e) {
-//            Log.e(TAG, "Problem building the URL", e);
-//        }
-//        return url;
-//    }
-
     /**
      * Create a URL for the reviews and trailers
      */
@@ -96,7 +51,7 @@ final class QueryUtils {
 
         URL url = null;
 
-        Uri baseUri = Uri.parse(BASE_TRAILERS_REVIEWS_URL);
+        Uri baseUri = Uri.parse(BASE_URL);
 
         Uri.Builder uriBuilder = baseUri.buildUpon();
         uriBuilder.appendEncodedPath(movieId)
@@ -111,14 +66,17 @@ final class QueryUtils {
         return url;
     }
 
-    static URL createMovieUrl (String selectedOption) {
+    /**
+     * Create a URL for the most popular and top rated movies
+     */
+    static URL createMovieUrl(String selectedOption) {
 
         /* API key parameter that will be appended to the URL */
         String API_PARAM = "api_key";
 
         URL url = null;
 
-        Uri baseUri = Uri.parse(BASE_TRAILERS_REVIEWS_URL);
+        Uri baseUri = Uri.parse(BASE_URL);
 
         Uri.Builder uriBuilder = baseUri.buildUpon();
         uriBuilder.appendEncodedPath(selectedOption)
@@ -199,69 +157,7 @@ final class QueryUtils {
                 line = reader.readLine();
             }
             reader.close();
-         }
+        }
         return output.toString();
     }
-
-//    /**
-//     * Return a list of Movie objects that has been built up from parsing a JSON response
-//     */
-//    private static List<Movie> extractFeatureFromJson(String movieJSON) {
-//
-//        /* If the JSON string is empty or null, then return early. */
-//        if (TextUtils.isEmpty(movieJSON)) {
-//            return null;
-//        }
-//
-//        /* Create an empty ArrayList that we can start adding movies to */
-//        List<Movie> movies = new ArrayList<>();
-//
-//        /* Try to parse the JSON response string. If there's a problem with the way the JSON
-//         is formatted, a JSONException exception object will be thrown.
-//         Catch the exception so the app doesn't crash, and print the error message to the logs. */
-//        try {
-//            /* Create a JSONObject from the JSON response string */
-//            JSONObject baseJsonResponse = new JSONObject(movieJSON);
-//
-//            /* Extract the JSONArray with the key "results" **/
-//            JSONArray movieArray = baseJsonResponse.getJSONArray("results");
-//
-//            /* For each movie in the movieArray, create a Movie object */
-//            for (int i = 0; i < movieArray.length(); i++) {
-//
-//                /* Get a single movie at position i within the list of movies */
-//                JSONObject currentMovieObject = movieArray.getJSONObject(i);
-//
-//                /* Extract the value for the required keys */
-//                String title = currentMovieObject.getString("title");
-//                String releaseDate = currentMovieObject.getString("release_date");
-//                String posterUrl = currentMovieObject.getString("poster_path");
-//                String userRating = currentMovieObject.getString("vote_average");
-//                String plotSynopsis = currentMovieObject.getString("overview");
-//                int id = currentMovieObject.getInt("id");
-//
-//                /* Create a new Movie object with the title, releaseDate, posterUrl, userRating,
-//               plotSynopsis and ID from the JSON response. */
-//                Movie movie = new Movie(id, title, releaseDate, posterUrl, userRating, plotSynopsis);
-//
-//                movie.setMovieId(id);
-//                movie.setMovieTitle(title);
-//                movie.setMovieReleaseDate(releaseDate);
-//                movie.setMovieUrlPoster(posterUrl);
-//                movie.setMovieUserRating(userRating);
-//                movie.setMoviePlotSynopsis(plotSynopsis);
-//
-//                /* Add the new movie to the list of movies. */
-//                movies.add(movie);
-//            }
-//        } catch (JSONException e) {
-//            /* If an error is thrown when executing any of the above statements in the "try" block,
-//             catch the exception here, so the app doesn't crash. Print a log message
-//             with the message from the exception. */
-//            Log.e(TAG, "Problem parsing the movie JSON response results", e);
-//        }
-//
-//        /* Return the list of movies. */
-//        return movies;
-//    }
 }

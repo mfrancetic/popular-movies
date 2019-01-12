@@ -1,6 +1,5 @@
 package com.example.android.popularmovies;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -10,15 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 
 import java.util.List;
 
 /**
- * A MovieAdapter creates a grid item layout for each movie in the data source
- * (a list of Movie objects).
- * These list item layouts will be provided to the RecyclerView to be displayed to the user.
+ * A MovieAdapter creates a recyclerView layout for the list of movies
  */
 class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
@@ -33,16 +29,18 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
     }
 
     /**
-     * List of trailers
+     * List of movies
      */
-    private  List<Movie> movies;
+    private List<Movie> movies;
 
     /**
      * URL for the movie poster from The MovieDB
      */
     private static final String BASE_POSTER_URL = "https://image.tmdb.org/t/p/";
 
-
+    /**
+     * The key of the current movie
+     */
     private static final String CURRENT_MOVIE = "currentMovie";
 
     /**
@@ -50,17 +48,13 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
      */
     private static final String posterSize = "w185";
 
-
-  /*  public MovieAdapter(List<Movie> movies) {
+    /**
+     * Sets the movie list and notifies the adapter that the dataset has been changed
+     */
+    void setMovieList(List<Movie> movies) {
         this.movies = movies;
-    }*/
-
-  public void setMovieList(List<Movie> movies){
-      this.movies = movies;
-      notifyDataSetChanged();
-
-  }
-
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
@@ -86,9 +80,8 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
         int width = context.getResources().getDisplayMetrics().widthPixels;
         int height = context.getResources().getDisplayMetrics().heightPixels;
 
-        /* Using the Picasso library load the fullPosterPathUri into the gridItemView,
+        /* Using the Picasso library load the fullPosterPathUri into the recyclerView,
          * resize and center it. */
-
         if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             com.squareup.picasso.Picasso
                     .get()
@@ -103,13 +96,14 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
                     .into(moviePosterImageView);
         }
 
-           /* Set an item click listener on the GridView, which sends an intent to the DetailActivity
+        /* Set an onClickListener on the RecyclerView, which sends an intent to the DetailActivity
          to open the details of the selected movie. */
         moviePosterImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra(CURRENT_MOVIE, movie);
+//                intent.putExtra(MainActivity.SPINNER_SELECTED_POSITION, MainActivity.selectedPosition);
                 context.startActivity(intent);
             }
         });

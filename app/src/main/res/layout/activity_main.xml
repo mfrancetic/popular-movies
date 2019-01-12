@@ -32,7 +32,9 @@
             android:id="@+id/empty_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_below="@id/spinner"
+            android:paddingTop="100sp"
+            android:layout_centerHorizontal="true"
             tools:text="@string/no_movies_found"
             android:textSize="@dimen/title_text_size" />
 
@@ -41,6 +43,7 @@
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:padding="100sp"
+            />
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>

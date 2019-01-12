@@ -35,7 +35,6 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
          */
         final Button fullReviewButton;
 
-
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             reviewTextView = itemView.findViewById(R.id.review_text_view);
