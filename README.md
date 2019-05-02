@@ -6,5 +6,7 @@ The application presents the most popular and highest rated movies from "The Mov
 
 The application uses Android Architecture Components (Room, LiveData, ViewModel and Lifecycle), allows users to view and play trailers in the web browser, and to read reviews of a selected movie.
 
+## Instructions for using API
+
 The API key has been removed. 
-Please request your own key from the themoviedb.org and insert it in the MainActivity.java file ("String "apiKey"). 
+Please request your own key from the **themoviedb.org** and insert it in the MainActivity.java file (**"String "apiKey")**. 
