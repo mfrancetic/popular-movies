@@ -3,13 +3,13 @@ package com.example.android.popularmovies;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
- class AddMovieViewModel extends ViewModel {
+ public class AddMovieViewModel extends ViewModel {
 
     private final LiveData<Movie> movie;
 
     /* Constructor which initializes the Movie variable and receives the database
      * and the movieId */
-    AddMovieViewModel(AppDatabase database, int movieId) {
+   public AddMovieViewModel(AppDatabase database, int movieId) {
         movie = database.movieDao().loadMovieById(movieId);
     }
 

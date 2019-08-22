@@ -8,7 +8,7 @@ import android.util.Log;
 
 import java.util.List;
 
- class MainViewModel extends AndroidViewModel {
+ public class MainViewModel extends AndroidViewModel {
 
     private static final String LOG_TAG = MainViewModel.class.getSimpleName();
     private final LiveData<List<Movie>> movies;
@@ -20,7 +20,7 @@ import java.util.List;
         movies = database.movieDao().loadAllFavoriteMovies();
     }
 
-    LiveData<List<Movie>> getMovies() {
+     LiveData<List<Movie>> getMovies() {
         return movies;
     }
 }

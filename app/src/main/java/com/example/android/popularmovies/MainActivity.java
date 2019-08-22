@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
      * Load the favorite movies saved in the local database, using the ViewModel and Observer
      */
     private void loadFavorites() {
-        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        MainViewModel viewModel = ViewModelProviders.of(MainActivity.this).get(MainViewModel.class);
         viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
 
             @Override
