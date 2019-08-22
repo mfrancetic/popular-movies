@@ -182,7 +182,7 @@ public class Movie implements Parcelable {
     /**
      * Creates and returns a new Movie object, as well as a new Movie Array
      */
-    static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         @Override
         public Movie createFromParcel(Parcel parcel) {
             return new Movie(parcel);

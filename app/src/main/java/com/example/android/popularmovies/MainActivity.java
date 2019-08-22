@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Generated value of the API key
      */
-    public static final String apiKey = "";
+    public static final String apiKey = Secret.api_key;
 
     /**
      * Key of the movie list state
