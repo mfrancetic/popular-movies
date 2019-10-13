@@ -10,3 +10,11 @@ The application uses Android Architecture Components (Room, LiveData, ViewModel 
 
 The API key has been removed. 
 Please request your own key from the **themoviedb.org** and insert it in the MainActivity.java file (**"String "apiKey")**. 
+
+## App Screenshots
+
+<img src="https://user-images.githubusercontent.com/33599053/66715887-d25c0980-edc8-11e9-8b78-0095406043f9.png" width=30% height=30%> 
+
+<img src="https://user-images.githubusercontent.com/33599053/66715889-d7b95400-edc8-11e9-85c8-af2ba359124e.png" width=30% height=30%> 
+
+<img src="https://user-images.githubusercontent.com/33599053/66715893-dab44480-edc8-11e9-9e44-9ee00a232f2d.png" width=30% height=30%> 
